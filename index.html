@@ -6,7 +6,6 @@
     <title>🐋 Whale Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <style>
-        /* Your existing CSS for UI/UX modernization */
         * {
             margin: 0;
             padding: 0;
@@ -147,59 +146,71 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* Existing .whale-popup styles (ensure these are present and perhaps tweak padding) */
-.whale-popup {
-    max-width: 280px; /* Slightly wider */
-    font-family: inherit;
-    background: white; /* This should be the only visible background */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* This should be the only shadow */
-    padding: 15px; /* Internal padding for your content */
-    /* Remove any margin or border that might create an extra box */
-    margin: 0; /* Ensure no margin */
-    border: none; /* Ensure no border */
-}
-
-/* New/Modified: Make Leaflet's content wrapper transparent and remove its padding */
-.leaflet-popup-content-wrapper {
-    background: transparent !important; /* Make it transparent */
-    padding: 0 !important; /* Remove its padding */
-    border-radius: 0 !important; /* Remove its border-radius if any */
-    box-shadow: none !important; /* Ensure no shadow on this wrapper */
-}
-
-/* Optional: Also check leaflet-popup-content if needed, though wrapper often suffices */
-.leaflet-popup-content {
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important; /* Ensure no margin */
-    border: none !important; /* Ensure no border */
-}
-
-/* Ensure the tip (arrow) integrates well, no change needed if it's already good */
-.leaflet-popup-tip {
-    background: white !important; /* Match the popup background */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Match the popup shadow */
-    /* You might need to adjust position based on shadow */
-}
+        /* Popup styling */
+        .whale-popup {
+            max-width: 280px;
+            font-family: inherit;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            margin: 0; /* Crucial: ensure no margin */
+            border: none; /* Crucial: ensure no border */
+        }
 
         .whale-popup h3 {
-            color: #2c3e50; /* Dark blue for heading */
+            color: #2c3e50;
             margin-bottom: 0.6rem;
-            font-size: 1.2rem; /* Slightly larger heading */
+            font-size: 1.2rem;
         }
 
+        /* Microdata/compact display adjustments */
         .whale-popup p {
-            color: #555; /* Medium grey for text */
-            font-size: 0.95rem; /* Slightly larger text */
-            margin-bottom: 0.4rem;
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem; /* Reduced margin */
+            line-height: 1.3;
         }
+
+        .whale-popup p strong {
+            font-weight: 600;
+            font-size: 0.9rem; /* Slightly smaller label font size */
+        }
+
+        .whale-popup .coordinates-display {
+            font-size: 0.85rem; /* Make coordinates slightly smaller */
+            color: #7f8c8d; /* Muted color for coordinates */
+            display: inline; /* Keep on same line */
+            white-space: nowrap; /* Prevent line breaks within the string */
+        }
+
 
         .whale-popup .date {
             color: #7f8c8d;
-            font-size: 0.85rem;
+            font-size: 0.85rem; /* Match coordinates font size */
             font-style: italic;
         }
+        
+        /* Leaflet popup container overrides */
+        .leaflet-popup-content-wrapper {
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .leaflet-popup-content {
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+
+        .leaflet-popup-tip {
+            background: white !important; /* Match the popup background */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Match the popup shadow */
+        }
+
 
         .loading-overlay {
             position: fixed;
@@ -207,7 +218,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(45, 52, 54, 0.95); /* Almost opaque dark grey */
+            background: rgba(45, 52, 54, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -234,7 +245,7 @@
             margin-top: 1rem;
             font-size: 1.2rem;
             opacity: 0.9;
-            color: #e0e0e0; /* Lighter text for loading */
+            color: #e0e0e0;
         }
 
         @media (max-width: 480px) {
@@ -250,10 +261,21 @@
                 padding: 0.6rem 0.8rem;
                 font-size: 0.8rem;
             }
+            /* Adjustments for mobile popup */
+            .whale-popup p {
+                font-size: 0.9rem;
+                margin-bottom: 0.15rem;
+            }
+            .whale-popup p strong {
+                font-size: 0.85rem;
+            }
+            .whale-popup .coordinates-display {
+                font-size: 0.8rem;
+            }
         }
 
         .custom-whale-icon {
-            background: #81c784; /* Matches new button green */
+            background: #81c784;
             border: 3px solid white;
             border-radius: 50%;
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
@@ -263,8 +285,8 @@
             background: transparent !important;
             border: none !important;
             border-radius: 0 !important;
-            box-shadow: none !important; /* Explicitly remove box-shadow */
-            font-size: 28px; /* Slightly larger emoji */
+            box-shadow: none !important;
+            font-size: 28px;
             text-align: center;
             line-height: 30px;
         }
@@ -309,7 +331,11 @@
                 this.markers = [];
                 this.activeSpecies = new Set();
                 this.userLocation = null;
-                this.locationCache = {}; // Cache for geocoded locations
+                // Removed all geocoding-related properties:
+                // this.locationCache = {};
+                // this.geocodingQueue = [];
+                // this.isProcessingQueue = false;
+                // this.requestDelay = 250; 
                 
                 this.init();
             }
@@ -367,7 +393,6 @@
                     
                     for (const species of whaleSpecies) {
                         try {
-                            // Using year=2025 as requested
                             const response = await fetch(
                                 `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2025`
                             );
@@ -423,7 +448,6 @@
 
                 const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
                 
-                // createPopupContent is synchronous and returns the div element
                 const popupDiv = this.createPopupContent(whale);
                 marker.bindPopup(popupDiv, {
                     maxWidth: 300,
@@ -463,103 +487,35 @@
                 return imageMap[scientificName] || 'images/default_whale.jpg';
             }
 
-            // New method to get human-readable location using reverse geocoding
-            async getHumanReadableLocation(lat, lon) {
-                const cacheKey = `${lat},${lon}`;
-                if (this.locationCache[cacheKey]) {
-                    return this.locationCache[cacheKey];
-                }
-
-                let location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`; // Default fallback
-
-                try {
-                    // **IMPORTANT: Replace YOUR_LOCATIONIQ_API_KEY with your actual API key**
-                    const locationIqApiKey = 'pk.445d55850e8073a40081ad8caea54e9e'; 
-                    const response = await fetch(`https://us1.locationiq.com/v1/reverse.php?key=${locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`);
-                    const data = await response.json();
-
-                    if (response.ok && data) {
-                        if (data.address) {
-                            const addr = data.address;
-                            if (addr.water) { // If it's a body of water
-                                location = addr.water;
-                            } else if (addr.hamlet || addr.village || addr.town || addr.city) {
-                                location = `${addr.hamlet || addr.village || addr.town || addr.city}`;
-                                if (addr.state || addr.country) {
-                                    location += `, ${addr.state || addr.country}`;
-                                }
-                            } else if (addr.county || addr.state || addr.country) {
-                                 location = `Off the coast of ${addr.county || addr.state || addr.country}`;
-                            } else if (data.display_name) {
-                                // Fallback to display_name if address details are sparse
-                                const parts = data.display_name.split(',');
-                                location = parts[0];
-                                if (parts.length > 1 && parts[1].trim().length > 0) {
-                                    location += `, ${parts[1].trim()}`;
-                                }
-                            }
-                        } else if (data.display_name) { // For general ocean areas
-                            location = data.display_name;
-                        }
-                    } else {
-                        console.warn('LocationIQ API returned an error or no data:', data.error || response.statusText);
-                    }
-
-                    
-
-                    if (location.trim() === '' || location === 'NA') { // Ensure no empty strings or "NA" from some APIs
-                        location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`;
-                    }
-
-                } catch (error) {
-                    console.error('Error reverse geocoding:', error);
-                    location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`;
-                }
-
-                this.locationCache[cacheKey] = location;
-                return location;
-            }
-
-            // createPopupContent is now synchronous and returns an HTMLElement
+            // Simplified createPopupContent - no async geocoding
             createPopupContent(whale) {
                 const commonName = this.getCommonName(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
-                // Use 'species' field if available for full scientific name, otherwise 'scientificName'
                 const fullScientificName = whale.species || whale.scientificName;
 
-                // Create the popup element immediately with a loading state for location
+                // Human-readable location fallback based on existing data fields in GBIF
+                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Oceanic Sighting';
+
                 const popupDiv = document.createElement('div');
                 popupDiv.className = 'whale-popup';
                 popupDiv.innerHTML = `
                     <h3>${commonName}</h3>
                     ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
                     <p><strong>Scientific name:</strong> ${fullScientificName}</p>
-                    <p><strong>Location:</strong> <span class="dynamic-location">Loading location...</span></p>
-                    <p><strong>Coordinates:</strong> ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</p>
+                    <p><strong>Location:</strong> ${humanReadableLocation}</p>
+                    <p>
+                        <strong>Coordinates:</strong> 
+                        <span class="coordinates-display">
+                            ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}
+                        </span>
+                    </p>
                     <p class="date">Recorded: ${date}</p>
                     ${whale.recordedBy ? `<p><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
                 `;
 
-                // Asynchronously fetch and update the human-readable location
-                // The .then() and .catch() handle the Promise from getHumanReadableLocation
-                this.getHumanReadableLocation(whale.decimalLatitude, whale.decimalLongitude)
-                    .then(humanLocation => {
-                        const dynamicLocationSpan = popupDiv.querySelector('.dynamic-location');
-                        if (dynamicLocationSpan) {
-                            dynamicLocationSpan.textContent = humanLocation;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Failed to set human-readable location in popup:', error);
-                        const dynamicLocationSpan = popupDiv.querySelector('.dynamic-location');
-                        if (dynamicLocationSpan) {
-                            dynamicLocationSpan.textContent = `Error getting location. Lat: ${whale.decimalLatitude.toFixed(2)}, Lon: ${whale.decimalLongitude.toFixed(2)}`;
-                        }
-                    });
-
-                return popupDiv; // Return the div element immediately
+                return popupDiv;
             }
 
             getCommonName(scientificName) {
@@ -683,7 +639,7 @@
                 btn.classList.add('loading');
                 btn.textContent = '🔄 Loading...';
                 
-                this.locationCache = {}; // Clear the location cache on refresh
+                // No locationCache to clear now as geocoding APIs are removed
                 await this.loadWhaleData();
                 this.resetButton(btn, '🔄 Refresh');
             }
