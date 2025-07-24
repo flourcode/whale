@@ -174,8 +174,8 @@
         .whale-popup p {
             color: #555;
             font-size: 0.95rem;
-            margin-bottom: 0.2rem; /* Reduced margin */
-            line-height: 1.3;
+            margin-bottom: 0.5rem; /* Increased margin slightly for readability of longer sentence */
+            line-height: 1.4; /* Slightly more space between lines */
         }
 
         .whale-popup p strong {
@@ -190,10 +190,16 @@
             white-space: nowrap; /* Prevent line breaks within the string */
         }
 
-
         .whale-popup .date {
             color: #7f8c8d;
             font-size: 0.85rem; /* Match coordinates font size */
+            font-style: italic;
+        }
+
+        .whale-popup .recorded-by { /* New class for recorded by line */
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 0.5rem;
             font-style: italic;
         }
         
@@ -270,12 +276,15 @@
             /* Adjustments for mobile popup */
             .whale-popup p {
                 font-size: 0.9rem;
-                margin-bottom: 0.15rem;
+                margin-bottom: 0.3rem; /* Slightly reduced for mobile */
             }
             .whale-popup p strong {
                 font-size: 0.85rem;
             }
             .whale-popup .coordinates-display {
+                font-size: 0.8rem;
+            }
+            .whale-popup .recorded-by {
                 font-size: 0.8rem;
             }
         }
@@ -494,29 +503,37 @@
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
-                // Use 'species' field if available for full scientific name, otherwise 'scientificName'
-                const displayScientificName = whale.species || whale.scientificName;
+                // Use the full GBIF scientific name, which often includes author and year
+                const gbifScientificName = whale.species || whale.scientificName; 
 
-                // Consolidate location and coordinates
-                const locationAndCoords = [];
-                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country;
-                
-                if (humanReadableLocation && humanReadableLocation !== 'Oceanic Sighting') { // Add Oceanic Sighting exclusion
-                    locationAndCoords.push(humanReadableLocation);
-                } else {
-                    locationAndCoords.push('Oceanic Sighting'); // Default if locality/state/country are empty
+                let scientificNameDetail = '';
+                // Only show a separate scientific name line if it's different from the common name
+                // (i.e., if it contains the author/year or is otherwise more specific than the common name)
+                if (commonName !== gbifScientificName) {
+                    scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificName}</p>`;
                 }
-                locationAndCoords.push(`<span class="coordinates-display">(${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)})</span>`);
+                
+                // Human-readable location fallback based on existing data fields in GBIF
+                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'the vast ocean';
+
+                // Construct the main descriptive sentence
+                const mainDescription = `
+                    <p>
+                        The <strong>${commonName}</strong> 
+                        ${date !== 'Unknown date' ? `was spotted on ${date}` : 'was spotted'}
+                        near <strong>${humanReadableLocation}</strong> 
+                        <span class="coordinates-display">(${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)})</span>.
+                    </p>
+                `;
 
                 const popupDiv = document.createElement('div');
                 popupDiv.className = 'whale-popup';
                 popupDiv.innerHTML = `
                     <h3>${commonName}</h3>
                     ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
-                    <p><strong>Scientific name:</strong> ${displayScientificName}</p>
-                    <p><strong>Location:</strong> ${locationAndCoords.join(' ')}</p>
-                    <p class="date">Recorded: ${date}</p>
-                    ${/* Removed "Recorded by" section */''}
+                    ${scientificNameDetail}
+                    ${mainDescription}
+                    ${whale.recordedBy ? `<p class="recorded-by"><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
                 `;
 
                 return popupDiv;
