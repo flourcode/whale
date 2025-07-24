@@ -14,33 +14,37 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #6a85b6 0%, #bac8e0 100%); /* Muted blue-grey gradient */
+            color: #333; /* Darker text for better contrast on lighter background */
             overflow-x: hidden;
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
+            background: rgba(45, 52, 54, 0.7); /* Muted dark grey with transparency */
+            backdrop-filter: blur(8px);
+            padding: 1.2rem; /* Slightly more padding */
             text-align: center;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            color: white; /* White text for header */
         }
 
         .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem; /* Slightly larger heading */
+            margin-bottom: 0.6rem;
+            color: #e0e0e0; /* Lighter color for heading */
         }
 
         .stats {
             display: flex;
             justify-content: space-around;
-            font-size: 0.8rem;
-            opacity: 0.9;
+            font-size: 0.85rem; /* Slightly larger stats font */
+            opacity: 0.95;
+            color: #c0c0c0; /* Lighter grey for stats */
         }
 
         .map-container {
@@ -60,31 +64,33 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 1rem;
+            background: rgba(45, 52, 54, 0.9); /* Muted dark grey with more opacity */
+            backdrop-filter: blur(12px);
+            padding: 1rem 0; /* Adjusted padding */
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         }
 
         .control-btn {
-            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(45deg, #81c784 0%, #4caf50 100%); /* Softer green gradient */
             border: none;
             color: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
+            padding: 0.9rem 1.5rem; /* More padding for a bolder button */
+            border-radius: 30px; /* More rounded */
+            font-size: 1rem; /* Slightly larger font */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Softer shadow */
+            letter-spacing: 0.5px; /* Slight letter spacing */
         }
 
         .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+            transform: translateY(-3px); /* More pronounced hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
         }
 
         .control-btn:active {
@@ -101,13 +107,15 @@
             top: 80px;
             left: 0;
             right: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(45, 52, 54, 0.85); /* Muted dark grey with transparency */
             backdrop-filter: blur(10px);
             padding: 1rem;
             display: none;
             z-index: 999;
             max-height: 200px;
             overflow-y: auto;
+            border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .species-filter.active {
@@ -121,41 +129,47 @@
         }
 
         .species-tag {
-            background: rgba(79, 172, 254, 0.3);
-            border: 1px solid #4facfe;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            font-size: 0.8rem;
+            background: rgba(189, 195, 199, 0.2); /* Muted light grey with transparency */
+            border: 1px solid #95a5a6; /* Muted border color */
+            color: #f0f0f0; /* Lighter text for tags */
+            padding: 0.6rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .species-tag:hover, .species-tag.active {
-            background: #4facfe;
-            transform: scale(1.05);
+            background: #4caf50; /* Matches button gradient start color */
+            border-color: #4caf50;
+            transform: scale(1.03); /* Subtle scale */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .whale-popup {
-            max-width: 250px;
+            max-width: 280px; /* Slightly wider */
             font-family: inherit;
+            background: white; /* White background for popup */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* More pronounced but soft shadow */
+            padding: 15px; /* Internal padding */
         }
 
         .whale-popup h3 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            color: #2c3e50; /* Dark blue for heading */
+            margin-bottom: 0.6rem;
+            font-size: 1.2rem; /* Slightly larger heading */
         }
 
         .whale-popup p {
-            color: #555;
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
+            color: #555; /* Medium grey for text */
+            font-size: 0.95rem; /* Slightly larger text */
+            margin-bottom: 0.4rem;
         }
 
         .whale-popup .date {
             color: #7f8c8d;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-style: italic;
         }
 
@@ -165,13 +179,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(45, 52, 54, 0.95); /* Almost opaque dark grey */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
 
         .loading-overlay.hidden {
@@ -190,8 +204,9 @@
 
         .loading-text {
             margin-top: 1rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
+            color: #e0e0e0; /* Lighter text for loading */
         }
 
         @media (max-width: 480px) {
@@ -210,7 +225,7 @@
         }
 
         .custom-whale-icon {
-            background: #4facfe;
+            background: #81c784; /* Matches new button green */
             border: 3px solid white;
             border-radius: 50%;
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
@@ -220,9 +235,8 @@
             background: transparent !important;
             border: none !important;
             border-radius: 0 !important;
-            /* Removed the box-shadow property */
-            /* box-shadow: 0 2px 8px rgba(0,0,0,0.3); */
-            font-size: 24px;
+            box-shadow: none !important; /* Explicitly remove box-shadow */
+            font-size: 28px; /* Slightly larger emoji */
             text-align: center;
             line-height: 30px;
         }
@@ -267,6 +281,7 @@
                 this.markers = [];
                 this.activeSpecies = new Set();
                 this.userLocation = null;
+                this.locationCache = {}; // Cache for geocoded locations
                 
                 this.init();
             }
@@ -312,8 +327,6 @@
 
             async loadWhaleData() {
                 try {
-                    // Query GBIF for recent whale sightings
-                    // Using scientificName for whales and limiting to recent records
                     const whaleSpecies = [
                         'Balaenoptera musculus', // Blue whale
                         'Megaptera novaeangliae', // Humpback whale  
@@ -386,8 +399,9 @@
 
                 const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
                 
-                const popupContent = this.createPopupContent(whale);
-                marker.bindPopup(popupContent, {
+                // createPopupContent is now async and returns an HTMLElement
+                const popupDiv = this.createPopupContent(whale);
+                marker.bindPopup(popupDiv, {
                     maxWidth: 300,
                     className: 'whale-popup'
                 });
@@ -410,7 +424,6 @@
                 return emojiMap[scientificName] || '🐋';
             }
 
-            // New method to get image URL for the species
             getWhaleImageUrl(scientificName) {
                 const imageMap = {
                     'Balaenoptera musculus': 'images/blue_whale.jpg',
@@ -427,26 +440,126 @@
                 return imageMap[scientificName] || 'images/default_whale.jpg'; // Path to a default image
             }
 
-            createPopupContent(whale) {
+            // New method to get human-readable location using reverse geocoding
+            async getHumanReadableLocation(lat, lon) {
+                const cacheKey = `${lat},${lon}`;
+                if (this.locationCache[cacheKey]) {
+                    return this.locationCache[cacheKey];
+                }
+
+                let location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`; // Default fallback
+
+                try {
+                    // Nominatim API for reverse geocoding
+                    // Important: Adhere to Nominatim Usage Policy (no heavy use without self-hosting/donating)
+                    const nominatimResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
+                    const nominatimData = await nominatimResponse.json();
+
+                    if (nominatimData.address) {
+                        const addr = nominatimData.address;
+                        if (addr.water) {
+                            location = addr.water; // e.g., "Pacific Ocean"
+                        } else if (addr.hamlet || addr.village || addr.town || addr.city) {
+                            location = `${addr.hamlet || addr.village || addr.town || addr.city}`;
+                            if (addr.state || addr.country) {
+                                location += `, ${addr.state || addr.country}`;
+                            }
+                        } else if (addr.county || addr.state || addr.country) {
+                            location = `Off the coast of ${addr.county || addr.state || addr.country}`;
+                        } else if (nominatimData.display_name) {
+                            // Fallback to display_name if address details are too sparse
+                            const parts = nominatimData.display_name.split(',');
+                            location = parts[0];
+                            if (parts.length > 1 && parts[1].trim().length > 0) {
+                                location += `, ${parts[1].trim()}`;
+                            }
+                        }
+                    } else if (nominatimData.display_name) {
+                         // Fallback to display_name if no address object (often for open ocean)
+                        if (nominatimData.display_name.toLowerCase().includes('ocean') || nominatimData.display_name.toLowerCase().includes('sea')) {
+                             location = nominatimData.display_name; // E.g., "North Pacific Ocean"
+                        } else {
+                            const parts = nominatimData.display_name.split(',');
+                            location = parts[0].trim();
+                            if (parts.length > 1 && parts[1].trim().length > 0) {
+                                location += `, ${parts[1].trim()}`;
+                            }
+                        }
+                    }
+
+                    // Secondary check for specific ocean names if location is still generic or just coordinates
+                    if (location === `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}` || location.toLowerCase().includes('ocean') || location.toLowerCase().includes('sea') || location.includes('Unnamed Road')) {
+                        try {
+                            // Use VLIZ Marine Regions WMS GetFeatureInfo for more specific ocean names
+                            const vlizResponse = await fetch(
+                                `https://www.vliz.be/vmdcdata/marbound/WMS/wms.php?request=GetFeatureInfo&service=WMS&srs=EPSG%3A4326&width=1&height=1&version=1.1.1&info_format=application/json&query_layers=sea_regions&layers=sea_regions&bbox=${lon-0.01},${lat-0.01},${lon+0.01},${lat+0.01}&x=0&y=0`
+                            );
+                            const vlizData = await vlizResponse.json();
+                            if (vlizData.features && vlizData.features.length > 0 && vlizData.features[0].properties && vlizData.features[0].properties.name) {
+                                location = vlizData.features[0].properties.name; // E.g., "North Pacific Ocean"
+                            }
+                        } catch (vlizError) {
+                            console.warn("VLIZ Marine Regions API error:", vlizError);
+                            // Fallback to a general ocean description if VLIZ also fails or doesn't find anything
+                            if (location === `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}` || location.toLowerCase().includes('unnamed')) {
+                                location = 'In the vast ocean';
+                            }
+                        }
+                    }
+                    
+                    if (location.trim() === '') { // Catch empty string results
+                        location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`;
+                    }
+
+
+                } catch (error) {
+                    console.error('Error reverse geocoding:', error);
+                    location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`; // Set to coordinates on error
+                }
+
+                this.locationCache[cacheKey] = location;
+                return location;
+            }
+
+
+            async createPopupContent(whale) { // This method is now async
                 const commonName = this.getCommonName(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
-                const location = whale.locality || whale.stateProvince || whale.country || 'Unknown location';
-                const imageUrl = this.getWhaleImageUrl(whale.scientificName); // Get the image URL
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
-                // Prioritize the full scientific name from 'species' if available, otherwise use 'scientificName'
-                const fullScientificName = whale.species ? whale.species : whale.scientificName;
+                // Use 'species' field if available for full scientific name, otherwise 'scientificName'
+                const fullScientificName = whale.species || whale.scientificName;
 
-                return `
-                    <div class="whale-popup">
-                        <h3>${commonName}</h3>
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
-                        <p><strong>Scientific name:</strong> ${fullScientificName}</p>
-                        <p><strong>Location:</strong> ${location}</p>
-                        <p><strong>Coordinates:</strong> ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</p>
-                        <p class="date">Recorded: ${date}</p>
-                        ${whale.recordedBy ? `<p><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
-                    </div>
+                // Create the popup element immediately with a loading state for location
+                const popupDiv = document.createElement('div');
+                popupDiv.className = 'whale-popup';
+                popupDiv.innerHTML = `
+                    <h3>${commonName}</h3>
+                    ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
+                    <p><strong>Scientific name:</strong> ${fullScientificName}</p>
+                    <p><strong>Location:</strong> <span class="dynamic-location">Loading location...</span></p>
+                    <p><strong>Coordinates:</strong> ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</p>
+                    <p class="date">Recorded: ${date}</p>
+                    ${whale.recordedBy ? `<p><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
                 `;
+
+                // Asynchronously fetch and update the human-readable location
+                this.getHumanReadableLocation(whale.decimalLatitude, whale.decimalLongitude)
+                    .then(humanLocation => {
+                        const dynamicLocationSpan = popupDiv.querySelector('.dynamic-location');
+                        if (dynamicLocationSpan) {
+                            dynamicLocationSpan.textContent = humanLocation;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to set human-readable location in popup:', error);
+                        const dynamicLocationSpan = popupDiv.querySelector('.dynamic-location');
+                        if (dynamicLocationSpan) {
+                            dynamicLocationSpan.textContent = `Error getting location. Lat: ${whale.decimalLatitude.toFixed(2)}, Lon: ${whale.decimalLongitude.toFixed(2)}`;
+                        }
+                    });
+
+                return popupDiv; // Return the div element
             }
 
             getCommonName(scientificName) {
@@ -466,9 +579,10 @@
 
             createSpeciesFilter() {
                 const speciesList = document.getElementById('speciesList');
+                // Use Set for unique species, then convert to array
                 const uniqueSpecies = [...new Set(this.whaleData.map(w => w.scientificName))];
                 
-                speciesList.innerHTML = '';
+                speciesList.innerHTML = ''; // Clear previous tags
                 
                 uniqueSpecies.forEach(species => {
                     const tag = document.createElement('div');
@@ -480,22 +594,24 @@
             }
 
             toggleSpeciesFilter(species = null) {
+                // If a species is provided, toggle its active state
                 if (species) {
                     if (this.activeSpecies.has(species)) {
                         this.activeSpecies.delete(species);
                     } else {
                         this.activeSpecies.add(species);
                     }
-                    this.displayWhales();
-                    this.updateSpeciesFilterUI();
+                    this.displayWhales(); // Re-display whales based on new filter
+                    this.updateSpeciesFilterUI(); // Update tag styling
                 } else {
+                    // If no species provided, toggle the filter dropdown visibility
                     document.getElementById('speciesFilter').classList.toggle('active');
                 }
             }
 
             updateSpeciesFilterUI() {
                 const tags = document.querySelectorAll('.species-tag');
-                const nameMap = { // Re-declare or get this map to correctly find scientificName
+                const nameMap = { // Must match the one in getCommonName
                     'Balaenoptera musculus': 'Blue Whale',
                     'Megaptera novaeangliae': 'Humpback Whale',
                     'Balaenoptera physalus': 'Fin Whale',
@@ -509,7 +625,7 @@
                 
                 tags.forEach(tag => {
                     let scientificName = null;
-                    // Find the scientific name by matching the common name
+                    // Find the scientific name by matching the common name from the tag's text content
                     for (const key in nameMap) {
                         if (nameMap[key] === tag.textContent) {
                             scientificName = key;
@@ -572,6 +688,8 @@
                 btn.classList.add('loading');
                 btn.textContent = '🔄 Loading...';
                 
+                // Clear the location cache on refresh to get fresh geocoding data if needed
+                this.locationCache = {};
                 await this.loadWhaleData();
                 this.resetButton(btn, '🔄 Refresh');
             }
@@ -584,15 +702,8 @@
             updateStats() {
                 document.getElementById('sightingCount').textContent = this.whaleData.length;
                 
-                // Count unique species manually for better compatibility
-                var uniqueSpecies = [];
-                this.whaleData.forEach(function(whale) {
-                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
-                        uniqueSpecies.push(whale.scientificName);
-                    }
-                });
-                
-                document.getElementById('speciesCount').textContent = uniqueSpecies.length;
+                // Count unique species using Set size
+                document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
             }
 
