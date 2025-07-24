@@ -26,43 +26,44 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FFFFFF; /* Pure white background */
+            background-color: #F8F8F8; /* Light grey background for overall app */
             color: #000000; /* Pure black text by default */
             line-height: 1.5; /* Generous line-height for readability */
         }
 
         /* Header Styling - Minimalist and High Contrast */
         .header {
-            background-color: #FFFFFF;
-            padding: 1rem 0; /* Vertical padding, no horizontal for full width */
+            background-color: #FFFFFF; /* White background for the header card */
+            padding: 1.5rem 1.2rem; /* More generous padding */
             text-align: center;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            box-shadow: none; /* No shadow */
-            border-bottom: 1px solid #EEEEEE; /* Very light, almost invisible border */
-            height: 60px; /* Fixed height */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft, diffused shadow for modern feel */
+            border-bottom-left-radius: 12px; /* Subtle rounding for the header "card" */
+            border-bottom-right-radius: 12px;
             display: flex;
             flex-direction: column; /* Stack title and stats */
             align-items: center;
             justify-content: center;
+            min-height: 90px; /* Minimum height to ensure space */
         }
 
         .header h1 {
-            font-size: 1.4rem;
+            font-size: 1.6rem; /* Slightly larger title for impact */
             font-weight: 700; /* Bold */
             color: #000000;
-            letter-spacing: -0.01em; /* Tighter spacing */
+            letter-spacing: -0.03em; /* Tighter spacing for headlines */
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 0; /* No margin as stats are right below */
+            gap: 10px; /* More space between emoji and text */
+            margin-bottom: 0.5rem; /* Space below title */
         }
 
         .header h1 .emoji {
-            font-size: 1.2rem;
+            font-size: 1.5rem; /* Larger emoji for prominence */
             color: #000000; /* Black emoji for monochrome */
         }
 
@@ -70,25 +71,17 @@
         .stats {
             display: flex; /* Make them visible */
             justify-content: center; /* Center align stats */
-            font-size: 0.8rem; /* Slightly smaller for subtle display */
+            font-size: 0.8rem; /* Subtle font size */
             font-weight: 400;
             color: #666666; /* Light grey for subtle stats */
-            padding: 5px 0; /* Vertical padding */
-            background-color: #F8F8F8; /* Subtle background for stats bar */
-            position: fixed; /* Fix below header */
-            top: 60px; /* Below header */
-            left: 0;
-            right: 0;
-            z-index: 990; /* Below header, above map */
-            border-bottom: 1px solid #EAEAEA; /* Light separator */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03); /* Very subtle shadow */
-            gap: 10px; /* Space between stats */
+            gap: 15px; /* More space between stats for clarity */
+            margin-top: 0; /* Aligns well with h1 margin-bottom */
         }
         .stats span {
             padding: 0;
         }
         .stats span:not(:last-child) {
-            border-right: none;
+            border-right: none; /* No dividers for a cleaner look */
         }
 
         /* Map Container & Map */
@@ -96,16 +89,19 @@
             height: 100vh;
             width: 100%;
             position: relative;
-            /* Header height (60px) + stats height (approx 35px) = 95px */
-            margin-top: 95px; 
-            border-radius: 4px; /* Minimal rounding */
-            overflow: hidden;
-            box-shadow: none; /* No shadow */
+            /* Margin top accounts for header height + stats height + generous top margin for map */
+            margin-top: calc(90px + 20px); /* Header (min-height) + a clean break */
+            border-radius: 12px; /* Consistent rounding with other elements */
+            overflow: hidden; /* Ensures map content respects border-radius */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Subtle shadow for map "card" */
+            margin-left: 12px; /* Horizontal margin for main content area */
+            margin-right: 12px;
+            width: calc(100% - 24px); /* Account for horizontal margins */
         }
 
         #map {
-            /* Full height minus header (60px) - stats (35px) - bottom nav (90px) */
-            height: calc(100vh - 60px - 35px - 90px); 
+            /* Height: Full viewport minus header, bottom nav, and top/bottom container margins */
+            height: calc(100vh - (90px + 20px) - (90px + 12px)); 
             width: 100%;
         }
         
@@ -116,89 +112,81 @@
         /* Map Tiles - Grayscale to make markers pop */
         #map .leaflet-tile-pane .leaflet-tile {
             filter: grayscale(100%);
-            transition: none;
+            transition: none; /* No transitions for instant response */
         }
 
-        /* Controls / Bottom Navigation Bar - Notion style: Pure Black, White Text */
+        /* Controls / Bottom Navigation Bar - Sleek, Black, Text-Only */
         .controls {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background-color: #000000; /* Pure black */
-            padding: 10px 0;
+            padding: 12px 0; /* Generous vertical padding */
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
-            box-shadow: none;
-            height: 90px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            padding-bottom: env(safe-area-inset-bottom);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15); /* More pronounced bottom shadow */
+            min-height: 90px; /* Fixed height for bottom nav bar */
+            border-top-left-radius: 12px; /* Consistent rounding */
+            border-top-right-radius: 12px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom)); /* Adjust for padding + safe areas */
         }
 
-        /* Control Buttons - Text Only */
+        /* Control Buttons - Text Only, Clean & Centered */
         .control-btn {
             background-color: transparent;
             border: none;
             color: #FFFFFF; /* Pure white for inactive */
-            padding: 8px 10px;
-            border-radius: 4px; /* Minimal rounding */
-            font-size: 0.95rem; /* Text size */
+            padding: 10px 15px; /* Generous touch target padding */
+            border-radius: 8px; /* Soft rounding */
+            font-size: 0.9rem; /* Text size */
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.1s ease-in-out;
+            transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out; /* Smooth hover */
             box-shadow: none;
-            letter-spacing: normal;
+            letter-spacing: 0.02em; /* Slightly spaced out text */
             text-transform: capitalize; /* Capitalize first letter */
-            display: flex; /* Flex to center text */
+            display: flex;
             align-items: center;
             justify-content: center;
-            flex: 1;
-            max-width: 100px;
+            flex-direction: column; /* Stack text labels in future if icon is added */
+            flex: 1; /* Distribute space evenly */
+            max-width: 120px; /* Max width for each button */
             height: 100%; /* Fill button height */
         }
 
-        /* Remove .control-btn .icon styles as icons are no longer used */
-        /* .control-btn .icon { display: none; } */
-
         .control-btn:hover {
             background-color: #333333; /* Darker black on hover */
-            transform: none;
-            box-shadow: none;
         }
         .control-btn.active {
-            color: #FFFFFF;
-            background-color: #333333; /* Darker background for active */
-        }
-        .control-btn.active .icon {
-            color: #FFFFFF;
+            color: #5C6BC0; /* Accent blue for active state */
+            background-color: #000000; /* Keep background black */
+            font-weight: 600; /* Slightly bolder for active */
         }
         .control-btn.loading {
-            background-color: #666666;
+            background-color: #666666; /* Muted loading */
             cursor: not-allowed;
             color: #FFFFFF;
-            transform: none;
-            box-shadow: none;
         }
 
-        /* Species Filter - Notion-style minimalist card */
+        /* Species Filter - Notion-style minimalist floating card */
         .species-filter {
             background-color: #FFFFFF;
-            padding: 24px;
+            padding: 24px; /* Generous padding */
             display: none;
             z-index: 999;
-            /* Max height calculation: viewport height - header - stats - bottom nav - top/bottom margins */
-            max-height: calc(100vh - 60px - 35px - 90px - 40px); /* Adjust based on actual heights */
+            /* Max height calculation for floating card: */
+            max-height: calc(100vh - (90px + 20px) - (90px + 20px)); /* total VH - header/map-top-margin - bottomNav/map-bottom-margin */
             overflow-y: auto;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            top: calc(60px + 35px + 20px); /* Below header + stats + margin */
-            left: 20px;
-            right: 20px;
-            bottom: calc(90px + 20px); /* Above bottom nav + margin */
+            border-radius: 12px; /* Consistent rounding */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Soft, prominent shadow */
+            position: absolute; /* Float over map */
+            top: calc(90px + 20px); /* Below header with ample margin */
+            left: 20px; /* Margin from left */
+            right: 20px; /* Margin from right */
+            bottom: calc(90px + 20px); /* Above bottom nav with ample margin */
         }
 
         .species-filter.active {
@@ -208,19 +196,19 @@
         .species-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px; /* More space between list items */
         }
 
         .species-tag {
-            background-color: #FFFFFF;
-            border: 1px solid #DDDDDD;
+            background-color: #FFFFFF; /* Pure white background */
+            border: 1px solid #E8E8E8; /* Very subtle light grey border */
             color: #000000;
-            padding: 0.8rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 1rem 1.2rem; /* Generous padding */
+            border-radius: 8px; /* Soft rounding */
+            font-size: 0.95rem;
             font-weight: 400;
             cursor: pointer;
-            transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
             box-shadow: none;
             display: flex;
             justify-content: space-between;
@@ -229,43 +217,45 @@
         }
         .species-tag::after { /* Text-based arrow */
             content: '›';
+            font-family: sans-serif; /* Ensure correct font for arrow */
             font-size: 1.5em;
-            color: #AAAAAA;
+            color: #AAAAAA; /* Muted arrow color */
             margin-left: 10px;
             font-weight: 300;
         }
 
         .species-tag:hover {
-            background-color: #F5F5F5;
-            border-color: #CCCCCC;
+            background-color: #F8F8F8; /* Light grey on hover */
+            border-color: #D8D8D8;
             transform: none;
             box-shadow: none;
         }
 
         .species-tag.active {
-            background-color: #E0E0E0;
-            border-color: #AAAAAA;
-            color: #000000;
+            background-color: #E8F0FE; /* Very light blue for active filter background */
+            border-color: #B3D9FF; /* Matching accent blue border */
+            color: #000000; /* Text remains black for clarity */
+            font-weight: 500; /* Slightly bolder for active */
             transform: none;
             box-shadow: none;
         }
 
         /* Popup styling - Clean, Soft, and Rounded */
         .whale-popup {
-            max-width: 300px;
+            max-width: 320px; /* Slightly wider popup for content */
             font-family: 'Inter', sans-serif;
             background-color: #FFFFFF;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 12px; /* Consistent rounding */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Soft, prominent shadow */
+            padding: 24px; /* Generous padding */
             border: none;
         }
 
         .whale-popup h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.25rem; /* Larger popup title */
+            font-weight: 700;
             color: #000000;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem; /* More space */
             text-align: center;
             letter-spacing: -0.01em;
             line-height: 1.2;
@@ -273,42 +263,43 @@
 
         .whale-popup p {
             color: #333333;
-            font-size: 0.85rem;
-            margin-bottom: 0.2rem;
-            line-height: 1.4;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem; /* More space */
+            line-height: 1.5;
         }
 
         .whale-popup p strong {
-            font-weight: 500;
+            font-weight: 600;
             color: #000000;
         }
 
         .whale-popup .coordinates-display {
             font-family: 'Roboto Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #666666;
             display: inline;
             white-space: nowrap;
+            letter-spacing: 0.02em; /* Slightly spaced for monospace */
         }
 
         .whale-popup .date, .whale-popup .recorded-by {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #666666;
             font-style: normal;
-            margin-top: 0.1rem;
+            margin-top: 0.3rem;
         }
 
         .whale-popup img {
-            border: 1px solid #EEEEEE;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-            border-radius: 2px;
+            border: 1px solid #EEEEEE; /* Very light border */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Subtle shadow */
+            border-radius: 8px; /* Soft rounding */
             width: 100%;
-            max-height: 120px;
+            max-height: 160px; /* Increased max-height for images */
             object-fit: cover;
-            margin-bottom: 8px;
+            margin-bottom: 15px; /* More space below image */
         }
 
-        /* Leaflet popup container overrides */
+        /* Leaflet popup container overrides - Match popup card style */
         .leaflet-popup-content-wrapper {
             background: transparent !important;
             padding: 0 !important;
@@ -325,7 +316,7 @@
 
         .leaflet-popup-tip {
             background-color: #FFFFFF !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
 
         /* Loading Overlay - Clean and Simple */
@@ -335,13 +326,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(255, 255, 255, 0.98);
+            background-color: rgba(255, 255, 255, 0.98); /* Almost opaque white */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px); /* Lighter blur */
         }
 
         .loading-overlay.hidden {
@@ -349,7 +340,7 @@
         }
 
         .whale-spinner {
-            font-size: 2.5rem;
+            font-size: 3rem; /* Larger spinner */
             animation: pulse 1.5s infinite ease-out;
             color: #000000; /* Black spinner */
         }
@@ -361,8 +352,8 @@
 
         .loading-text {
             font-family: 'Inter', sans-serif;
-            margin-top: 0.8rem;
-            font-size: 0.85rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #333333;
             letter-spacing: 0.05em;
@@ -372,7 +363,6 @@
         }
 
         /* Custom icon base styling for consistency */
-        /* These styles make the emojis stand out over the map */
         .custom-whale-icon {
             background-color: #000000; /* Black background for contrast */
             border: 2px solid #FFFFFF; /* White border */
@@ -400,51 +390,61 @@
         }
 
         /* --- Mobile Specific Overrides (Media Queries) --- */
-
         @media (max-width: 768px) {
             .header {
-                height: 56px; /* Slightly smaller header */
+                padding: 1.2rem 1rem;
+                min-height: 80px;
             }
             .header h1 {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
+                margin-bottom: 0.4rem;
             }
             .header h1 .emoji {
-                font-size: 1rem;
+                font-size: 1.3rem;
             }
             .stats {
-                font-size: 0.7rem;
-                height: 30px; /* Smaller stats bar */
-                top: 56px; /* Position below smaller header */
-                gap: 8px;
+                font-size: 0.75rem;
+                gap: 10px;
+                margin-top: 0; /* Ensures consistent margin below h1 */
             }
+
             .map-container {
-                margin-top: calc(56px + 30px + 4px); /* Header + Stats + small margin below stats */
+                margin-top: calc(80px + 12px); /* Header min-height + margin */
+                margin-left: 8px; /* Tighter margins on mobile */
+                margin-right: 8px;
+                width: calc(100% - 16px);
             }
             #map {
-                height: calc(100vh - 56px - 30px - 90px); /* Adjusted for mobile header/stats/nav heights */
+                height: calc(100vh - (80px + 12px) - (80px + 8px)); /* total VH - header/map-top-margin - bottomNav/map-bottom-margin */
             }
+
             .controls {
-                height: 80px; /* Slightly smaller bottom nav */
-                padding-top: 8px; /* Adjust padding */
+                min-height: 80px;
+                padding: 10px 0;
             }
             .control-btn {
-                font-size: 0.8rem;
-                padding: 6px 8px;
+                font-size: 0.85rem;
+                padding: 8px 10px;
             }
+
             .species-filter {
-                padding: 16px;
-                top: calc(56px + 30px + 8px); /* Position below header+stats with margin */
-                bottom: calc(90px + 16px); /* Above controls with margin */
+                padding: 20px;
+                top: calc(80px + 12px); /* Position below header with margin */
+                left: 12px;
+                right: 12px;
+                bottom: calc(80px + 12px); /* Above bottom nav with margin */
+                max-height: calc(100vh - (80px + 12px) - (80px + 12px));
             }
             .species-tag {
-                padding: 0.7rem 1rem;
-                font-size: 0.85rem;
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
+
             .whale-popup {
-                padding: 16px;
+                padding: 20px;
             }
             .whale-popup h3 {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             .whale-popup p {
                 font-size: 0.8rem;
@@ -456,44 +456,44 @@
                 font-size: 0.7rem;
             }
             .whale-popup img {
-                max-height: 100px;
+                max-height: 120px;
             }
             .loading-text {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
             }
         }
         
         @media (max-width: 420px) {
             .header h1 {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             .header h1 .emoji {
-                font-size: 0.9rem;
+                font-size: 1.1rem;
             }
             .stats {
-                font-size: 0.65rem;
-                height: 25px; /* Even smaller stats bar */
-                top: 52px; /* Position below even smaller header */
-                gap: 5px;
+                font-size: 0.7rem;
+                gap: 8px;
             }
             .map-container {
-                margin-top: calc(52px + 25px + 4px);
+                margin-top: calc(80px + 8px); /* Tighter margin */
             }
             #map {
-                height: calc(100vh - 52px - 25px - 80px); /* Adjust map height */
+                height: calc(100vh - (80px + 8px) - (80px + 8px));
             }
             .controls {
-                height: 70px; /* Even smaller bottom nav */
+                min-height: 75px;
+                padding-top: 8px;
             }
             .control-btn {
-                font-size: 0.75rem;
-                padding: 5px 6px;
+                font-size: 0.8rem;
+            }
+            .species-filter {
+                top: calc(80px + 8px);
+                bottom: calc(75px + 8px);
+                max-height: calc(100vh - (80px + 8px) - (75px + 8px));
             }
             .whale-popup h3 {
-                font-size: 0.95rem;
-            }
-            .whale-popup p {
-                font-size: 0.75rem;
+                font-size: 1rem;
             }
         }
     </style>
@@ -506,13 +506,12 @@
 
     <header class="header">
         <h1><span class="emoji">🐋</span> Whale Tracker</h1>
+        <div class="stats">
+            <span>Sightings: <span id="sightingCount">0</span></span>
+            <span>Species: <span id="speciesCount">0</span></span>
+            <span>Last Update: <span id="lastUpdate">Loading...</span></span>
+        </div>
     </header>
-
-    <div class="stats">
-        <span>Sightings: <span id="sightingCount">0</span></span>
-        <span>Species: <span id="speciesCount">0</span></span>
-        <span>Last Update: <span id="lastUpdate">Loading...</span></span>
-    </div>
 
     <div class="species-filter" id="speciesFilter">
         <div class="species-list" id="speciesList">
@@ -561,6 +560,8 @@
                     attributionControl: false
                 }).setView([20, -140], 3); // Centered on Pacific Ocean for global view
 
+                // Using Esri Ocean Base map tiles. Consider a more minimalist tile set
+                // like Stamen Toner Lite if these still look too busy when grayscale.
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                     attribution: 'Tiles &copy; Esri',
                     maxZoom: 18
@@ -839,10 +840,10 @@
             async refreshData() {
                 const btn = document.getElementById('refreshBtn');
                 btn.classList.add('loading');
-                btn.textContent = 'Refreshing...'; /* Changed text to "Refreshing..." */
+                btn.textContent = 'Refreshing...';
                 
                 await this.loadWhaleData();
-                this.resetButton(btn, 'Refresh'); /* Changed text to "Refresh" */
+                this.resetButton(btn, 'Refresh');
             }
 
             resetButton(btn, text) {
