@@ -244,8 +244,7 @@
 
     <div class="species-filter" id="speciesFilter">
         <div class="species-list" id="speciesList">
-            <!-- Species tags will be populated here -->
-        </div>
+            </div>
     </div>
 
     <div class="map-container">
@@ -310,7 +309,43 @@
                 });
             }
 
- 
+            async loadWhaleData() {
+                try {
+                    // Query GBIF for recent whale sightings
+                    // Using scientificName for whales and limiting to recent records
+                    const whaleSpecies = [
+                        'Balaenoptera musculus', // Blue whale
+                        'Megaptera novaeangliae', // Humpback whale  
+                        'Balaenoptera physalus', // Fin whale
+                        'Balaenoptera acutorostrata', // Minke whale
+                        'Eubalaena glacialis', // North Atlantic right whale
+                        'Physeter macrocephalus', // Sperm whale
+                        'Orcinus orca', // Killer whale
+                        'Globicephala melas', // Pilot whale
+                        'Delphinus delphis' // Common dolphin
+                    ];
+
+                    const allData = [];
+                    
+                    for (const species of whaleSpecies) {
+                        try {
+                            const response = await fetch(
+                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2025` // Changed to '2025' only
+                            );
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.results) {
+                                    allData.push(...data.results);
+                                }
+                            }
+                        } catch (error) {
+                            console.warn(`Failed to fetch data for ${species}:`, error);
+                        }
+                    }
+
+                    this.whaleData = allData.filter(record => 
+                        record.decimalLatitude && 
                         record.decimalLongitude &&
                         Math.abs(record.decimalLatitude) <= 90 &&
                         Math.abs(record.decimalLongitude) <= 180
@@ -374,14 +409,33 @@
                 return emojiMap[scientificName] || '🐋';
             }
 
+            // New method to get image URL for the species
+            getWhaleImageUrl(scientificName) {
+                const imageMap = {
+                    'Balaenoptera musculus': 'images/blue_whale.jpg',
+                    'Megaptera novaeangliae': 'images/humpback_whale.jpg',
+                    'Balaenoptera physalus': 'images/fin_whale.jpg',
+                    'Balaenoptera acutorostrata': 'images/minke_whale.jpg',
+                    'Eubalaena glacialis': 'images/right_whale.jpg',
+                    'Physeter macrocephalus': 'images/sperm_whale.jpg',
+                    'Orcinus orca': 'images/orca.jpg',
+                    'Globicephala melas': 'images/pilot_whale.jpg',
+                    'Delphinus delphis': 'images/common_dolphin.jpg'
+                    // Add more mappings as needed, ensure these images exist in your /images folder
+                };
+                return imageMap[scientificName] || 'images/default_whale.jpg'; // Path to a default image
+            }
+
             createPopupContent(whale) {
                 const commonName = this.getCommonName(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const location = whale.locality || whale.stateProvince || whale.country || 'Unknown location';
-                
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName); // Get the image URL
+
                 return `
                     <div class="whale-popup">
                         <h3>${commonName}</h3>
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
                         <p><strong>Scientific name:</strong> ${whale.scientificName}</p>
                         <p><strong>Location:</strong> ${location}</p>
                         <p><strong>Coordinates:</strong> ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</p>
@@ -408,14 +462,7 @@
 
             createSpeciesFilter() {
                 const speciesList = document.getElementById('speciesList');
-                const uniqueSpecies = [];
-                
-                // Get unique species names
-                this.whaleData.forEach(whale => {
-                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
-                        uniqueSpecies.push(whale.scientificName);
-                    }
-                });
+                const uniqueSpecies = [...new Set(this.whaleData.map(w => w.scientificName))];
                 
                 speciesList.innerHTML = '';
                 
@@ -428,7 +475,7 @@
                 });
             }
 
-            toggleSpeciesFilter(species) {
+            toggleSpeciesFilter(species = null) {
                 if (species) {
                     if (this.activeSpecies.has(species)) {
                         this.activeSpecies.delete(species);
@@ -444,7 +491,7 @@
 
             updateSpeciesFilterUI() {
                 const tags = document.querySelectorAll('.species-tag');
-                const nameMap = {
+                const nameMap = { // Re-declare or get this map to correctly find scientificName
                     'Balaenoptera musculus': 'Blue Whale',
                     'Megaptera novaeangliae': 'Humpback Whale',
                     'Balaenoptera physalus': 'Fin Whale',
@@ -457,10 +504,16 @@
                 };
                 
                 tags.forEach(tag => {
-                    const species = Object.keys(nameMap).find(key => 
-                        nameMap[key] === tag.textContent
-                    );
-                    if (this.activeSpecies.has(species)) {
+                    let scientificName = null;
+                    // Find the scientific name by matching the common name
+                    for (const key in nameMap) {
+                        if (nameMap[key] === tag.textContent) {
+                            scientificName = key;
+                            break;
+                        }
+                    }
+
+                    if (scientificName && this.activeSpecies.has(scientificName)) {
                         tag.classList.add('active');
                     } else {
                         tag.classList.remove('active');
