@@ -300,7 +300,43 @@
                 });
             }
 
- 
+            async loadWhaleData() {
+                try {
+                    // Query GBIF for recent whale sightings
+                    // Using scientificName for whales and limiting to recent records
+                    const whaleSpecies = [
+                        'Balaenoptera musculus', // Blue whale
+                        'Megaptera novaeangliae', // Humpback whale  
+                        'Balaenoptera physalus', // Fin whale
+                        'Balaenoptera acutorostrata', // Minke whale
+                        'Eubalaena glacialis', // North Atlantic right whale
+                        'Physeter macrocephalus', // Sperm whale
+                        'Orcinus orca', // Killer whale
+                        'Globicephala melas', // Pilot whale
+                        'Delphinus delphis' // Common dolphin
+                    ];
+
+                    const allData = [];
+                    
+                    for (const species of whaleSpecies) {
+                        try {
+                            const response = await fetch(
+                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2023,2024,2025`
+                            );
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.results) {
+                                    allData.push(...data.results);
+                                }
+                            }
+                        } catch (error) {
+                            console.warn(`Failed to fetch data for ${species}:`, error);
+                        }
+                    }
+
+                    this.whaleData = allData.filter(record => 
+                        record.decimalLatitude && 
                         record.decimalLongitude &&
                         Math.abs(record.decimalLatitude) <= 90 &&
                         Math.abs(record.decimalLongitude) <= 180
