@@ -1147,6 +1147,9 @@
             this.markers = [];
             this.activeSpecies = new Set();
             
+            this.initialMapCenter = [20, -140]; // Store initial center
+            this.initialMapZoom = 3;             // Store initial zoom
+            
             this.init();
         }
 
@@ -1163,7 +1166,7 @@
                 zoomControl: false,
                 attributionControl: false,
                 maxBoundsViscosity: 1.0
-            }).setView([20, -140], 3);
+            }).setView(this.initialMapCenter, this.initialMapZoom); // Use stored initial values
 
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri',
@@ -1235,6 +1238,9 @@
                 document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
                 document.getElementById('mapViewBtn').classList.add('active');
                 document.getElementById('speciesFilter').classList.remove('active');
+                
+                // Reset map view to initial state
+                this.map.setView(this.initialMapCenter, this.initialMapZoom);
             });
             
             // Filter button
