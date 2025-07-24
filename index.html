@@ -300,28 +300,27 @@
                 });
             }
 
-            async loadWhaleData() {
+async loadWhaleData() {
                 try {
-                    // Query GBIF for recent whale sightings
-                    // Using scientificName for whales and limiting to recent records
                     const whaleSpecies = [
-                        'Balaenoptera musculus', // Blue whale
-                        'Megaptera novaeangliae', // Humpback whale  
-                        'Balaenoptera physalus', // Fin whale
-                        'Balaenoptera acutorostrata', // Minke whale
-                        'Eubalaena glacialis', // North Atlantic right whale
-                        'Physeter macrocephalus', // Sperm whale
-                        'Orcinus orca', // Killer whale
-                        'Globicephala melas', // Pilot whale
-                        'Delphinus delphis' // Common dolphin
+                        'Balaenoptera musculus',
+                        'Megaptera novaeangliae',
+                        'Balaenoptera physalus',
+                        'Balaenoptera acutorostrata',
+                        'Eubalaena glacialis',
+                        'Physeter macrocephalus',
+                        'Orcinus orca',
+                        'Globicephala melas',
+                        'Delphinus delphis'
                     ];
 
                     const allData = [];
                     
                     for (const species of whaleSpecies) {
                         try {
+                            // Corrected line: Use 'startYear,endYear' format for the year range
                             const response = await fetch(
-                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2023,2024,2025`
+                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2023,2025` // Changed to 2023,2025
                             );
                             
                             if (response.ok) {
@@ -351,7 +350,6 @@
                     this.showErrorMessage();
                 }
             }
-
             displayWhales() {
                 // Clear existing markers
                 this.markers.forEach(marker => this.map.removeLayer(marker));
