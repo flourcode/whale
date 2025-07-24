@@ -59,6 +59,12 @@
             width: 100%;
         }
 
+        /* NEW: Greyscale filter for map tiles */
+        #map .leaflet-tile-pane .leaflet-tile {
+            filter: grayscale(100%);
+            transition: filter 0.3s ease-in-out;
+        }
+
         .controls {
             position: fixed;
             bottom: 0;
@@ -331,11 +337,6 @@
                 this.markers = [];
                 this.activeSpecies = new Set();
                 this.userLocation = null;
-                // Removed all geocoding-related properties:
-                // this.locationCache = {};
-                // this.geocodingQueue = [];
-                // this.isProcessingQueue = false;
-                // this.requestDelay = 250; 
                 
                 this.init();
             }
@@ -353,6 +354,7 @@
                     attributionControl: false
                 }).setView([20, -140], 3);
 
+                // Using the Esri Ocean Base map tiles as requested
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                     attribution: 'Tiles &copy; Esri',
                     maxZoom: 18
