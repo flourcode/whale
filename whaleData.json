@@ -1,0 +1,27 @@
+[
+  {
+    "decimalLatitude": 34.0522,
+    "decimalLongitude": -118.2437,
+    "scientificName": "Megaptera novaeangliae",
+    "eventDate": "2024-07-20",
+    "locality": "Santa Monica Bay",
+    "recordedBy": "Whale Watcher 1"
+  },
+  {
+    "decimalLatitude": 47.6062,
+    "decimalLongitude": -122.3321,
+    "scientificName": "Orcinus orca",
+    "eventDate": "2024-07-21",
+    "locality": "Puget Sound",
+    "recordedBy": "Marine Biologist X"
+  },
+  {
+    "decimalLatitude": 25.7617,
+    "decimalLongitude": -80.1918,
+    "scientificName": "Balaenoptera musculus",
+    "eventDate": "2024-07-19",
+    "country": "USA",
+    "stateProvince": "Florida",
+    "recordedBy": "Ocean Explorer"
+  }
+]
