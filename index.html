@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐋 Whale Tracker - Discover Ocean Giants</title>
+    <title>🌊 Whale Tracker - Discover Ocean Giants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -472,40 +472,219 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* Popup Styling - Modern Card */
-        .leaflet-popup {
-            margin-bottom: 50px;
+        /* Full Screen Modal for Mobile */
+        .whale-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease-out;
         }
 
-        .leaflet-popup-content-wrapper {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: var(--shadow-xl);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0;
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .whale-modal.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .whale-modal-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .whale-modal-image {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            background: linear-gradient(135deg, var(--ocean-light) 0%, var(--ocean-accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
 
-        .leaflet-popup-content {
-            margin: 0;
-            padding: 0;
-            width: 320px !important;
+        .whale-modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .leaflet-popup-tip {
-            background: rgba(255, 255, 255, 0.98);
+        .whale-modal-emoji {
+            font-size: 8rem;
+            filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.3));
+            animation: modalFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes modalFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .whale-modal-info {
+            flex: 1;
+            background: white;
+            padding: 2rem;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            margin-top: -30px;
+            position: relative;
+            color: var(--ocean-dark);
+        }
+
+        .whale-modal-badge {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ocean-accent);
+            color: white;
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(100, 181, 246, 0.4);
+        }
+
+        .whale-modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--ocean-dark);
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .whale-modal-location {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--ocean-dark);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .whale-modal-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .whale-modal-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--foam-white);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .whale-modal-detail:hover {
+            transform: translateX(5px);
             box-shadow: var(--shadow-md);
         }
 
-        /* Force popups to respect viewport on mobile */
+        .whale-modal-detail-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .whale-modal-detail-content {
+            flex: 1;
+        }
+
+        .whale-modal-detail-label {
+            font-size: 0.85rem;
+            color: rgba(10, 22, 40, 0.6);
+            font-weight: 500;
+        }
+
+        .whale-modal-detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ocean-dark);
+        }
+
+        .whale-modal-coordinates {
+            font-family: 'Space Grotesk', monospace;
+            color: var(--ocean-light);
+        }
+
+        /* Hide Leaflet popups on mobile */
         @media (max-width: 768px) {
             .leaflet-popup {
-                top: auto !important;
+                display: none !important;
             }
-            
-            .leaflet-popup-content-wrapper {
-                margin-top: 20px;
+        }
+
+        /* Desktop adjustments for modal */
+        @media (min-width: 769px) {
+            .whale-modal-content {
+                max-width: 600px;
+                margin: 2rem auto;
+                border-radius: 24px;
+                overflow: hidden;
+                min-height: auto;
+                box-shadow: var(--shadow-xl);
+            }
+
+            .whale-modal-image {
+                height: 300px;
+                border-radius: 24px 24px 0 0;
+            }
+
+            .modal-close {
+                background: rgba(0, 0, 0, 0.5);
             }
         }
 
@@ -867,6 +1046,46 @@
         </div>
     </div>
 
+    <div class="whale-modal" id="whaleModal">
+        <button class="modal-close" id="modalClose">×</button>
+        <div class="whale-modal-content">
+            <div class="whale-modal-image" id="modalImage">
+                <div class="whale-modal-emoji" id="modalEmoji">🐋</div>
+            </div>
+            <div class="whale-modal-info">
+                <div class="whale-modal-badge">Recent Sighting</div>
+                <h2 class="whale-modal-title" id="modalTitle">Whale Name</h2>
+                <p class="whale-modal-location" id="modalLocation">Location</p>
+                
+                <div class="whale-modal-details">
+                    <div class="whale-modal-detail">
+                        <div class="whale-modal-detail-icon">📅</div>
+                        <div class="whale-modal-detail-content">
+                            <div class="whale-modal-detail-label">Date Spotted</div>
+                            <div class="whale-modal-detail-value" id="modalDate">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="whale-modal-detail">
+                        <div class="whale-modal-detail-icon">📍</div>
+                        <div class="whale-modal-detail-content">
+                            <div class="whale-modal-detail-label">Coordinates</div>
+                            <div class="whale-modal-detail-value whale-modal-coordinates" id="modalCoords">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="whale-modal-detail" id="modalRecorderSection">
+                        <div class="whale-modal-detail-icon">👤</div>
+                        <div class="whale-modal-detail-content">
+                            <div class="whale-modal-detail-label">Recorded By</div>
+                            <div class="whale-modal-detail-value" id="modalRecorder">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header class="header">
         <div class="header-content">
             <div class="whale-header">
@@ -1079,17 +1298,67 @@
 
                 const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
                 
-                const popupContent = this.createPopupContent(whale);
-                marker.bindPopup(popupContent, {
-                    maxWidth: 320,
-                    className: 'whale-popup-wrapper',
-                    autoPan: true,
-                    autoPanPaddingTopLeft: [20, 180],
-                    autoPanPaddingBottomRight: [20, 100],
-                    keepInView: true
-                });
+                // On mobile, use modal instead of popup
+                if (window.innerWidth <= 768) {
+                    marker.on('click', () => this.showWhaleModal(whale));
+                } else {
+                    // Desktop keeps the popup experience
+                    const popupContent = this.createPopupContent(whale);
+                    marker.bindPopup(popupContent, {
+                        maxWidth: 320,
+                        className: 'whale-popup-wrapper',
+                        autoPan: true,
+                        autoPanPaddingTopLeft: [20, 180],
+                        autoPanPaddingBottomRight: [20, 100],
+                        keepInView: true
+                    });
+                }
 
                 return marker;
+            }
+
+            showWhaleModal(whale) {
+                const modal = document.getElementById('whaleModal');
+                const modalImage = document.getElementById('modalImage');
+                const modalEmoji = document.getElementById('modalEmoji');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalLocation = document.getElementById('modalLocation');
+                const modalDate = document.getElementById('modalDate');
+                const modalCoords = document.getElementById('modalCoords');
+                const modalRecorder = document.getElementById('modalRecorder');
+                const modalRecorderSection = document.getElementById('modalRecorderSection');
+                
+                // Get whale data
+                const commonName = this.getCommonName(whale.scientificName);
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
+                const emoji = this.getWhaleEmoji(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
+                
+                // Set modal content
+                modalTitle.textContent = commonName;
+                modalLocation.textContent = location;
+                modalDate.textContent = date;
+                modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`;
+                
+                // Handle image/emoji
+                if (imageUrl) {
+                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
+                } else {
+                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
+                }
+                
+                // Handle recorder
+                if (whale.recordedBy) {
+                    modalRecorder.textContent = whale.recordedBy;
+                    modalRecorderSection.style.display = 'flex';
+                } else {
+                    modalRecorderSection.style.display = 'none';
+                }
+                
+                // Show modal
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
 
             getWhaleEmoji(scientificName) {
