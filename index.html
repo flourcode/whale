@@ -234,7 +234,8 @@
 
     <div class="species-filter" id="speciesFilter">
         <div class="species-list" id="speciesList">
-            </div>
+            <!-- Species tags will be populated here -->
+        </div>
     </div>
 
     <div class="map-container">
@@ -299,18 +300,7 @@
                 });
             }
 
-            async loadWhaleData() {
-                try {
-                    // This is where the error was. Assuming you want to fetch data.
-                    // Replace './whaleData.json' with your actual API endpoint or data source.
-                    const response = await fetch('./whaleData.json'); 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-
-                    this.whaleData = data.filter(record =>
-                        record.decimalLatitude &&
+ 
                         record.decimalLongitude &&
                         Math.abs(record.decimalLatitude) <= 90 &&
                         Math.abs(record.decimalLongitude) <= 180
@@ -408,14 +398,7 @@
 
             createSpeciesFilter() {
                 const speciesList = document.getElementById('speciesList');
-                const uniqueSpecies = [];
-                
-                // Get unique species names
-                this.whaleData.forEach(whale => {
-                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
-                        uniqueSpecies.push(whale.scientificName);
-                    }
-                });
+                const uniqueSpecies = [...new Set(this.whaleData.map(w => w.scientificName))];
                 
                 speciesList.innerHTML = '';
                 
@@ -428,7 +411,7 @@
                 });
             }
 
-            toggleSpeciesFilter(species) {
+            toggleSpeciesFilter(species = null) {
                 if (species) {
                     if (this.activeSpecies.has(species)) {
                         this.activeSpecies.delete(species);
@@ -444,21 +427,9 @@
 
             updateSpeciesFilterUI() {
                 const tags = document.querySelectorAll('.species-tag');
-                const nameMap = {
-                    'Balaenoptera musculus': 'Blue Whale',
-                    'Megaptera novaeangliae': 'Humpback Whale',
-                    'Balaenoptera physalus': 'Fin Whale',
-                    'Balaenoptera acutorostrata': 'Minke Whale',
-                    'Eubalaena glacialis': 'North Atlantic Right Whale',
-                    'Physeter macrocephalus': 'Sperm Whale',
-                    'Orcinus orca': 'Killer Whale (Orca)',
-                    'Globicephala melas': 'Long-finned Pilot Whale',
-                    'Delphinus delphis': 'Common Dolphin'
-                };
-                
                 tags.forEach(tag => {
-                    const species = Object.keys(nameMap).find(key => 
-                        nameMap[key] === tag.textContent
+                    const species = Object.keys(this.getCommonName).find(key => 
+                        this.getCommonName(key) === tag.textContent
                     );
                     if (this.activeSpecies.has(species)) {
                         tag.classList.add('active');
@@ -526,16 +497,7 @@
 
             updateStats() {
                 document.getElementById('sightingCount').textContent = this.whaleData.length;
-                
-                // Count unique species manually for better compatibility
-                var uniqueSpecies = [];
-                this.whaleData.forEach(function(whale) {
-                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
-                        uniqueSpecies.push(whale.scientificName);
-                    }
-                });
-                
-                document.getElementById('speciesCount').textContent = uniqueSpecies.length;
+                document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
             }
 
