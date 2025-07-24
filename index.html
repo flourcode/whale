@@ -1025,6 +1025,11 @@
                 margin-bottom: 100px;
             }
         }
+		.modal-close {
+    /* ... existing styles ... */
+    pointer-events: all;
+    touch-action: manipulation;
+}
     </style>
 </head>
 <body>
@@ -1198,32 +1203,70 @@
             }
 
             setupEventListeners() {
-                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
-                document.getElementById('filterBtn').addEventListener('click', () => this.toggleSpeciesFilter());
-                
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
-                        document.getElementById('speciesFilter').classList.remove('active');
-                    }
-                });
-
-                document.getElementById('mapViewBtn').addEventListener('click', () => {
-                    console.log('Map View Button Clicked!');
-                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                    document.getElementById('mapViewBtn').classList.add('active');
-                    document.getElementById('speciesFilter').classList.remove('active');
-                });
-                
-                document.getElementById('filterBtn').addEventListener('click', () => {
-                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                    document.getElementById('filterBtn').classList.add('active');
-                });
-
-                 document.getElementById('refreshBtn').addEventListener('click', () => {
-                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                    document.getElementById('refreshBtn').classList.add('active');
-                });
+    // Modal close button
+    const modalCloseBtn = document.getElementById('modalClose');
+    if (modalCloseBtn) {
+        modalCloseBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.closeWhaleModal();
+        };
+    }
+    
+    // Modal background click to close
+    const whaleModal = document.getElementById('whaleModal');
+    if (whaleModal) {
+        whaleModal.onclick = (e) => {
+            if (e.target === whaleModal) {
+                this.closeWhaleModal();
             }
+        };
+    }
+    
+    // Escape key to close modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('whaleModal').classList.contains('active')) {
+            this.closeWhaleModal();
+        }
+    });
+    
+    // Map view button
+    document.getElementById('mapViewBtn').addEventListener('click', () => {
+        console.log('Map View Button Clicked!');
+        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('mapViewBtn').classList.add('active');
+        document.getElementById('speciesFilter').classList.remove('active');
+    });
+    
+    // Filter button
+    document.getElementById('filterBtn').addEventListener('click', () => {
+        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('filterBtn').classList.add('active');
+        this.toggleSpeciesFilter();
+    });
+    
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('refreshBtn').classList.add('active');
+        this.refreshData();
+    });
+    
+    // Close species filter when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
+            document.getElementById('speciesFilter').classList.remove('active');
+        }
+    });
+    
+    // Handle window resize to switch between modal and popup
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            this.displayWhales(); // Recreate markers with appropriate interaction
+        }, 250);
+    });
+}
 
             async loadWhaleData() {
                 try {
