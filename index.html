@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌊 Whale Tracker - Discover Ocean Giants</title>
+    <title>🐋 Whale Tracker - Discover Ocean Giants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -498,6 +498,17 @@
             box-shadow: var(--shadow-md);
         }
 
+        /* Force popups to respect viewport on mobile */
+        @media (max-width: 768px) {
+            .leaflet-popup {
+                top: auto !important;
+            }
+            
+            .leaflet-popup-content-wrapper {
+                margin-top: 20px;
+            }
+        }
+
         .whale-popup {
             color: var(--ocean-dark);
             position: relative;
@@ -939,11 +950,31 @@
                     position: 'topright'
                 }).addTo(this.map);
                 
-                // Ensure popups open within view
+                // Custom popup positioning for mobile
                 this.map.on('popupopen', (e) => {
-                    const px = this.map.project(e.target._popup._latlng);
-                    px.y -= e.target._popup._container.clientHeight / 2;
-                    this.map.panTo(this.map.unproject(px), {animate: true});
+                    const popup = e.popup;
+                    const popupHeight = popup._container.offsetHeight;
+                    const mapHeight = this.map.getSize().y;
+                    const headerHeight = window.innerWidth <= 768 ? 170 : 140;
+                    
+                    // Check if popup would be cut off at the top
+                    const popupTop = this.map.latLngToContainerPoint(popup._latlng).y - popupHeight;
+                    
+                    if (popupTop < headerHeight) {
+                        // Calculate new position to ensure popup is fully visible
+                        const targetY = headerHeight + popupHeight / 2 + 20;
+                        const targetPoint = L.point(
+                            this.map.latLngToContainerPoint(popup._latlng).x,
+                            targetY
+                        );
+                        const targetLatLng = this.map.containerPointToLatLng(targetPoint);
+                        
+                        // Smoothly pan to show the popup
+                        this.map.panTo(targetLatLng, {
+                            animate: true,
+                            duration: 0.5
+                        });
+                    }
                 });
             }
 
@@ -1051,7 +1082,11 @@
                 const popupContent = this.createPopupContent(whale);
                 marker.bindPopup(popupContent, {
                     maxWidth: 320,
-                    className: 'whale-popup-wrapper'
+                    className: 'whale-popup-wrapper',
+                    autoPan: true,
+                    autoPanPaddingTopLeft: [20, 180],
+                    autoPanPaddingBottomRight: [20, 100],
+                    keepInView: true
                 });
 
                 return marker;
