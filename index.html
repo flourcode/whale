@@ -505,27 +505,7 @@
                         console.warn('LocationIQ API returned an error or no data:', data.error || response.statusText);
                     }
 
-                    // Further refinement for general ocean areas using VLIZ for named marine regions
-                    // Only fetch from VLIZ if LocationIQ didn't give a specific place or gave a very general ocean name
-                    if (location.includes('ocean') || location.includes('sea') || location.includes('Unnamed Road') || location === `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`) {
-                        try {
-                            const vlizResponse = await fetch(
-                                `https://www.vliz.be/vmdcdata/marbound/WMS/wms.php?request=GetFeatureInfo&service=WMS&srs=EPSG%3A4326&width=1&height=1&version=1.1.1&info_format=application/json&query_layers=sea_regions&layers=sea_regions&bbox=${lon-0.01},${lat-0.01},${lon+0.01},${lat+0.01}&x=0&y=0`
-                            );
-                            const vlizData = await vlizResponse.json();
-                            if (vlizData.features && vlizData.features.length > 0 && vlizData.features[0].properties && vlizData.features[0].properties.name) {
-                                location = vlizData.features[0].properties.name; // E.g., "North Pacific Ocean"
-                            } else if (location.includes('Unnamed Road') || location === `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`) {
-                                // If still generic, default to a broad ocean description
-                                location = 'In the vast ocean';
-                            }
-                        } catch (vlizError) {
-                            console.warn("VLIZ Marine Regions API error, defaulting to LocationIQ or generic:", vlizError);
-                            if (location.includes('Unnamed Road') || location === `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`) {
-                                location = 'In the vast ocean';
-                            }
-                        }
-                    }
+                    
 
                     if (location.trim() === '' || location === 'NA') { // Ensure no empty strings or "NA" from some APIs
                         location = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`;
