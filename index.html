@@ -463,11 +463,30 @@
 
             updateSpeciesFilterUI() {
                 const tags = document.querySelectorAll('.species-tag');
+                // Get the nameMap directly or reconstruct it
+                const nameMap = {
+                    'Balaenoptera musculus': 'Blue Whale',
+                    'Megaptera novaeangliae': 'Humpback Whale',
+                    'Balaenoptera physalus': 'Fin Whale',
+                    'Balaenoptera acutorostrata': 'Minke Whale',
+                    'Eubalaena glacialis': 'North Atlantic Right Whale',
+                    'Physeter macrocephalus': 'Sperm Whale',
+                    'Orcinus orca': 'Killer Whale (Orca)',
+                    'Globicephala melas': 'Long-finned Pilot Whale',
+                    'Delphinus delphis': 'Common Dolphin'
+                };
+                
                 tags.forEach(tag => {
-                    const species = Object.keys(this.getCommonName).find(key => 
-                        this.getCommonName(key) === tag.textContent
-                    );
-                    if (this.activeSpecies.has(species)) {
+                    // Find the scientific name corresponding to the tag's common name
+                    let scientificName = null;
+                    for (const key in nameMap) {
+                        if (nameMap[key] === tag.textContent) {
+                            scientificName = key;
+                            break;
+                        }
+                    }
+
+                    if (scientificName && this.activeSpecies.has(scientificName)) {
                         tag.classList.add('active');
                     } else {
                         tag.classList.remove('active');
