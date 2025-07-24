@@ -474,8 +474,8 @@
 
                 try {
                     // **IMPORTANT: Replace YOUR_LOCATIONIQ_API_KEY with your actual API key**
-                    const locationIqApiKey = 'YOUR_LOCATIONIQ_API_KEY'; 
-                    const response = await fetch(`https://us1.locationiq.com/v1/reverse.php?key=${pk.445d55850e8073a40081ad8caea54e9e}&lat=${lat}&lon=${lon}&format=json`);
+                    const locationIqApiKey = 'pk.445d55850e8073a40081ad8caea54e9e'; 
+                    const response = await fetch(`https://us1.locationiq.com/v1/reverse.php?key=${locationIqApiKey}&lat=${lat}&lon=${lon}&format=json`);
                     const data = await response.json();
 
                     if (response.ok && data) {
