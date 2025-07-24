@@ -147,14 +147,41 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .whale-popup {
-            max-width: 280px; /* Slightly wider */
-            font-family: inherit;
-            background: white; /* White background for popup */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* More pronounced but soft shadow */
-            padding: 15px; /* Internal padding */
-        }
+        /* Existing .whale-popup styles (ensure these are present and perhaps tweak padding) */
+.whale-popup {
+    max-width: 280px; /* Slightly wider */
+    font-family: inherit;
+    background: white; /* This should be the only visible background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* This should be the only shadow */
+    padding: 15px; /* Internal padding for your content */
+    /* Remove any margin or border that might create an extra box */
+    margin: 0; /* Ensure no margin */
+    border: none; /* Ensure no border */
+}
+
+/* New/Modified: Make Leaflet's content wrapper transparent and remove its padding */
+.leaflet-popup-content-wrapper {
+    background: transparent !important; /* Make it transparent */
+    padding: 0 !important; /* Remove its padding */
+    border-radius: 0 !important; /* Remove its border-radius if any */
+    box-shadow: none !important; /* Ensure no shadow on this wrapper */
+}
+
+/* Optional: Also check leaflet-popup-content if needed, though wrapper often suffices */
+.leaflet-popup-content {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important; /* Ensure no margin */
+    border: none !important; /* Ensure no border */
+}
+
+/* Ensure the tip (arrow) integrates well, no change needed if it's already good */
+.leaflet-popup-tip {
+    background: white !important; /* Match the popup background */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Match the popup shadow */
+    /* You might need to adjust position based on shadow */
+}
 
         .whale-popup h3 {
             color: #2c3e50; /* Dark blue for heading */
