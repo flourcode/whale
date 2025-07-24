@@ -1030,6 +1030,156 @@
     pointer-events: all;
     touch-action: manipulation;
 }
+/* Header - Make it cleaner, potentially smaller if desired */
+        .header {
+            /* Keep existing styles, but consider reducing padding or font-size if it feels too large */
+            /* The overall height will be reduced as stats are moved */
+            padding: 0.8rem 1rem; /* Slightly smaller padding */
+        }
+
+        .header-content {
+            /* Now only contains whale-header, remove gap/justify-content if not needed */
+            justify-content: center; /* Center the logo and title */
+            gap: 0; /* No gap needed if stats are gone */
+        }
+
+        .header h1 {
+            font-size: 1.6rem; /* Slightly smaller for a cleaner look */
+        }
+
+        /* Remove or drastically simplify .stats if it's no longer a separate floating element */
+        .stats {
+            display: none; /* Hide the old stats element */
+        }
+
+        /* Controls - Now houses both buttons and stats */
+        .controls {
+            flex-direction: column; /* Stack buttons and stats vertically on mobile */
+            align-items: center; /* Center horizontally */
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem; /* Adjust padding to accommodate both sections */
+            display: flex; /* Already flex */
+            gap: 0.8rem; /* Gap between button section and stats section */
+            z-index: 1000;
+            border-radius: 30px; /* Adjust if needed for new shape */
+            box-shadow: var(--shadow-xl);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%; /* Take full width within controls */
+            justify-content: center; /* Center buttons */
+        }
+
+        .bottom-stats {
+            display: flex;
+            flex-wrap: wrap; /* Allow stats to wrap if screen is too narrow */
+            gap: 0.5rem; /* Gap between stat pills */
+            justify-content: center; /* Center stat pills */
+            width: 100%; /* Take full width within controls */
+            padding-top: 0.5rem; /* Little separation from buttons */
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
+        }
+
+        .bottom-stats .stat-pill {
+            /* Keep existing stat-pill styles, but potentially reduce font-size/padding for compactness */
+            padding: 0.4rem 0.8rem; /* Smaller padding for compactness */
+            font-size: 0.75rem; /* Smaller font size */
+        }
+
+        .bottom-stats .stat-pill .stat-icon {
+            font-size: 0.9rem; /* Adjust icon size */
+        }
+
+        .bottom-stats .stat-pill .stat-value {
+            font-size: 0.85rem; /* Adjust value size */
+        }
+
+        /* Adjust map container margin-bottom to clear the new, taller controls */
+        #map {
+            height: calc(100vh - 120px - 100px); /* Original map height */
+            /* You'll need to re-evaluate this calculation based on the new height of your bottom controls. */
+            /* For example, if controls become 100px tall, then: */
+            /* height: calc(100vh - var(--header-height) - var(--controls-height)); */
+            /* You might need to make the header height a CSS variable for easier adjustment */
+        }
+
+        /* Mobile Responsive Design Adjustments */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1rem; /* Adjusted for mobile */
+            }
+
+            .header-content {
+                flex-direction: row; /* Keep logo and title in a row */
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .map-container {
+                margin-top: 100px; /* Reduced header height */
+            }
+
+            #map {
+                /* Recalculate based on new header and controls height */
+                height: calc(100vh - 100px - 140px); /* Example: 100px header, 140px controls */
+            }
+
+            .controls {
+                bottom: 10px;
+                padding: 0.5rem;
+                border-radius: 40px; /* Can be larger or smaller */
+            }
+
+            .control-buttons {
+                flex-wrap: wrap; /* Allow buttons to wrap if necessary */
+                justify-content: space-around; /* Distribute buttons */
+                gap: 0.3rem; /* Smaller gap for buttons */
+            }
+            .control-btn {
+                padding: 0.6rem 1rem; /* Slightly smaller for mobile */
+                font-size: 0.8rem;
+            }
+            .control-btn .btn-icon {
+                /* For smaller screens, you might keep or hide icons based on preference */
+                display: inline-block; /* Or none */
+            }
+
+            .bottom-stats {
+                padding-top: 0.4rem;
+                gap: 0.4rem;
+            }
+            .bottom-stats .stat-pill {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .giant-whale {
+                font-size: 2.2rem;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            #map {
+                /* Adjust height based on smaller header and controls */
+                height: calc(100vh - 90px - 130px); /* Example */
+            }
+
+            .control-btn .btn-icon {
+                display: none; /* Hide icons on very small screens to save space */
+            }
+        }
     </style>
 </head>
 <body>
@@ -1097,21 +1247,7 @@
                 <div class="giant-whale">🐋</div>
                 <h1>Whale Tracker</h1>
             </div>
-            <div class="stats">
-                <div class="stat-pill">
-                    <span class="stat-icon">📍</span>
-                    <span>Sightings: <span class="stat-value" id="sightingCount">0</span></span>
-                </div>
-                <div class="stat-pill">
-                    <span class="stat-icon">🐋</span>
-                    <span>Species: <span class="stat-value" id="speciesCount">0</span></span>
-                </div>
-                <div class="stat-pill">
-                    <span class="stat-icon">🕐</span>
-                    <span>Updated: <span class="stat-value" id="lastUpdate">--:--</span></span>
-                </div>
             </div>
-        </div>
     </header>
 
     <div class="species-filter" id="speciesFilter">
@@ -1124,498 +1260,514 @@
     </div>
 
     <div class="controls">
-        <button class="control-btn active" id="mapViewBtn">
-            <span class="btn-icon">🗺️</span>
-            <span>Map</span>
-        </button>
-        <button class="control-btn" id="filterBtn">
-            <span class="btn-icon">🔍</span>
-            <span>Filter</span>
-        </button>
-        <button class="control-btn" id="refreshBtn">
-            <span class="btn-icon">🔄</span>
-            <span>Refresh</span>
-        </button>
+        <div class="control-buttons">
+            <button class="control-btn active" id="mapViewBtn">
+                <span class="btn-icon">🗺️</span>
+                <span>Map</span>
+            </button>
+            <button class="control-btn" id="filterBtn">
+                <span class="btn-icon">🔍</span>
+                <span>Filter</span>
+            </button>
+            <button class="control-btn" id="refreshBtn">
+                <span class="btn-icon">🔄</span>
+                <span>Refresh</span>
+            </button>
+        </div>
+        <div class="bottom-stats">
+            <div class="stat-pill">
+                <span class="stat-icon">📍</span>
+                <span>Sightings: <span class="stat-value" id="sightingCount">0</span></span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-icon">🐋</span>
+                <span>Species: <span class="stat-value" id="speciesCount">0</span></span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-icon">🕐</span>
+                <span>Updated: <span class="stat-value" id="lastUpdate">--:--</span></span>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script>
-    class WhaleTracker {
-        constructor() {
-            this.map = null;
-            this.whaleData = [];
-            this.markers = [];
-            this.activeSpecies = new Set();
-            
-            this.initialMapCenter = [20, -140]; // Store initial center
-            this.initialMapZoom = 3;             // Store initial zoom
-            
-            this.init();
-        }
-
-        async init() {
-            this.initMap();
-            this.setupEventListeners();
-            await this.loadWhaleData();
-            this.hideLoading();
-            this.updateStats(); 
-        }
-
-        initMap() {
-            this.map = L.map('map', {
-                zoomControl: false,
-                attributionControl: false,
-                maxBoundsViscosity: 1.0
-            }).setView(this.initialMapCenter, this.initialMapZoom); // Use stored initial values
-
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri',
-                maxZoom: 18
-            }).addTo(this.map);
-
-            L.control.zoom({
-                position: 'topright'
-            }).addTo(this.map);
-            
-            // Custom popup positioning for mobile
-            this.map.on('popupopen', (e) => {
-                const popup = e.popup;
-                const popupHeight = popup._container.offsetHeight;
-                const mapHeight = this.map.getSize().y;
-                const headerHeight = window.innerWidth <= 768 ? 170 : 140;
+    <script>
+        class WhaleTracker {
+            constructor() {
+                this.map = null;
+                this.whaleData = [];
+                this.markers = [];
+                this.activeSpecies = new Set();
                 
-                // Check if popup would be cut off at the top
-                const popupTop = this.map.latLngToContainerPoint(popup._latlng).y - popupHeight;
+                this.initialMapCenter = [20, -140]; // Store initial center
+                this.initialMapZoom = 3;             // Store initial zoom
                 
-                if (popupTop < headerHeight) {
-                    // Calculate new position to ensure popup is fully visible
-                    const targetY = headerHeight + popupHeight / 2 + 20;
-                    const targetPoint = L.point(
-                        this.map.latLngToContainerPoint(popup._latlng).x,
-                        targetY
-                    );
-                    const targetLatLng = this.map.containerPointToLatLng(targetPoint);
+                this.init();
+            }
+
+            async init() {
+                this.initMap();
+                this.setupEventListeners();
+                await this.loadWhaleData();
+                this.hideLoading();
+                this.updateStats(); 
+            }
+
+            initMap() {
+                this.map = L.map('map', {
+                    zoomControl: false,
+                    attributionControl: false,
+                    maxBoundsViscosity: 1.0
+                }).setView(this.initialMapCenter, this.initialMapZoom); // Use stored initial values
+
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri',
+                    maxZoom: 18
+                }).addTo(this.map);
+
+                L.control.zoom({
+                    position: 'topright'
+                }).addTo(this.map);
+                
+                // Custom popup positioning for mobile
+                this.map.on('popupopen', (e) => {
+                    const popup = e.popup;
+                    const popupHeight = popup._container.offsetHeight;
+                    const mapHeight = this.map.getSize().y;
+                    const headerHeight = window.innerWidth <= 768 ? 170 : 140;
                     
-                    // Smoothly pan to show the popup
-                    this.map.panTo(targetLatLng, {
-                        animate: true,
-                        duration: 0.5
-                    });
-                }
-            });
-        }
-
-        setupEventListeners() {
-            // Modal close button
-            const modalCloseBtn = document.getElementById('modalClose');
-            if (modalCloseBtn) {
-                modalCloseBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    this.closeWhaleModal();
-                };
-            }
-            
-            // Modal background click to close
-            const whaleModal = document.getElementById('whaleModal');
-            if (whaleModal) {
-                whaleModal.onclick = (e) => {
-                    if (e.target === whaleModal) {
-                        this.closeWhaleModal();
-                    }
-                };
-            }
-            
-            // Escape key to close modal
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && document.getElementById('whaleModal').classList.contains('active')) {
-                    this.closeWhaleModal();
-                }
-            });
-            
-            // Map view button
-            document.getElementById('mapViewBtn').addEventListener('click', () => {
-                console.log('Map View Button Clicked!');
-                document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                document.getElementById('mapViewBtn').classList.add('active');
-                document.getElementById('speciesFilter').classList.remove('active');
-                
-                // Reset map view to initial state
-                this.map.setView(this.initialMapCenter, this.initialMapZoom);
-            });
-            
-            // Filter button
-            document.getElementById('filterBtn').addEventListener('click', () => {
-                document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                document.getElementById('filterBtn').classList.add('active');
-                this.toggleSpeciesFilter();
-            });
-            
-            // Refresh button
-            document.getElementById('refreshBtn').addEventListener('click', () => {
-                document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
-                document.getElementById('refreshBtn').classList.add('active');
-                this.refreshData();
-            });
-            
-            // Close species filter when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
-                    document.getElementById('speciesFilter').classList.remove('active');
-                }
-            });
-            
-            // Handle window resize to switch between modal and popup
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    this.displayWhales(); // Recreate markers with appropriate interaction
-                }, 250);
-            });
-        }
-
-        closeWhaleModal() {
-            document.getElementById('whaleModal').classList.remove('active');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
-        }
-
-        async loadWhaleData() {
-            try {
-                const whaleSpecies = [
-                    'Balaenoptera musculus',
-                    'Megaptera novaeangliae',
-                    'Balaenoptera physalus',
-                    'Balaenoptera acutorostrata',
-                    'Eubalaena glacialis',
-                    'Physeter macrocephalus',
-                    'Orcinus orca',
-                    'Globicephala melas',
-                    'Delphinus delphis'
-                ];
-
-                const allData = [];
-                
-                for (const species of whaleSpecies) {
-                    try {
-                        const response = await fetch(
-                            `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2025`
+                    // Check if popup would be cut off at the top
+                    const popupTop = this.map.latLngToContainerPoint(popup._latlng).y - popupHeight;
+                    
+                    if (popupTop < headerHeight) {
+                        // Calculate new position to ensure popup is fully visible
+                        const targetY = headerHeight + popupHeight / 2 + 20;
+                        const targetPoint = L.point(
+                            this.map.latLngToContainerPoint(popup._latlng).x,
+                            targetY
                         );
+                        const targetLatLng = this.map.containerPointToLatLng(targetPoint);
                         
-                        if (response.ok) {
-                            const data = await response.json();
-                            if (data.results) {
-                                allData.push(...data.results);
-                            }
-                        }
-                    } catch (error) {
-                        console.warn(`Failed to fetch data for ${species}:`, error);
+                        // Smoothly pan to show the popup
+                        this.map.panTo(targetLatLng, {
+                            animate: true,
+                            duration: 0.5
+                        });
                     }
-                }
-
-                this.whaleData = allData.filter(record => 
-                    record.decimalLatitude && 
-                    record.decimalLongitude &&
-                    Math.abs(record.decimalLatitude) <= 90 &&
-                    Math.abs(record.decimalLongitude) <= 180
-                );
-
-                this.updateStats();
-                this.displayWhales();
-                this.createSpeciesFilter();
-                
-            } catch (error) {
-                console.error('Error loading whale data:', error);
-                this.showErrorMessage();
-            }
-        }
-
-        displayWhales() {
-            this.markers.forEach(marker => this.map.removeLayer(marker));
-            this.markers = [];
-
-            this.whaleData.forEach(whale => {
-                if (this.activeSpecies.size === 0 || this.activeSpecies.has(whale.scientificName)) {
-                    const marker = this.createWhaleMarker(whale);
-                    marker.addTo(this.map);
-                    this.markers.push(marker);
-                }
-            });
-        }
-
-        createWhaleMarker(whale) {
-            const icon = L.divIcon({
-                html: `<div class="whale-marker">${this.getWhaleEmoji(whale.scientificName)}</div>`,
-                className: 'whale-marker-container',
-                iconSize: [50, 50],
-                iconAnchor: [25, 25]
-            });
-
-            const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
-            
-            // On mobile, use modal instead of popup
-            if (window.innerWidth <= 768) {
-                marker.on('click', () => this.showWhaleModal(whale));
-            } else {
-                // Desktop keeps the popup experience
-                const popupContent = this.createPopupContent(whale);
-                marker.bindPopup(popupContent, {
-                    maxWidth: 320,
-                    className: 'whale-popup-wrapper',
-                    autoPan: true,
-                    autoPanPaddingTopLeft: [20, 180],
-                    autoPanPaddingBottomRight: [20, 100],
-                    keepInView: true
                 });
             }
 
-            return marker;
-        }
-
-        showWhaleModal(whale) {
-            const modal = document.getElementById('whaleModal');
-            const modalImage = document.getElementById('modalImage');
-            const modalEmoji = document.getElementById('modalEmoji');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalLocation = document.getElementById('modalLocation');
-            const modalDate = document.getElementById('modalDate');
-            const modalCoords = document.getElementById('modalCoords');
-            const modalRecorder = document.getElementById('modalRecorder');
-            const modalRecorderSection = document.getElementById('modalRecorderSection');
-            
-            // Get whale data
-            const commonName = this.getCommonName(whale.scientificName);
-            const imageUrl = this.getWhaleImageUrl(whale.scientificName);
-            const emoji = this.getWhaleEmoji(whale.scientificName);
-            const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
-            const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-            
-            // Set modal content
-            modalTitle.textContent = commonName;
-            modalLocation.textContent = location;
-            modalDate.textContent = date;
-            modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`;
-            
-            // Handle image/emoji
-            if (imageUrl) {
-                modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
-            } else {
-                modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
-            }
-            
-            // Handle recorder
-            if (whale.recordedBy) {
-                modalRecorder.textContent = whale.recordedBy;
-                modalRecorderSection.style.display = 'flex';
-            } else {
-                modalRecorderSection.style.display = 'none';
-            }
-            
-            // Show modal
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        getWhaleEmoji(scientificName) {
-            const emojiMap = {
-                'Balaenoptera musculus': '🐋',
-                'Megaptera novaeangliae': '🐋',
-                'Balaenoptera physalus': '🐋',
-                'Balaenoptera acutorostrata': '🐋',
-                'Eubalaena glacialis': '🐋',
-                'Physeter macrocephalus': '🐋',
-                'Orcinus orca': '🐋',
-                'Globicephala melas': '🐋',
-                'Delphinus delphis': '🐬'
-            };
-            
-            // Extract just the genus and species (first two words)
-            const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
-            return emojiMap[binomialName] || '🐋';
-        }
-
-        getWhaleImageUrl(scientificName) {
-            const imageMap = {
-                'Balaenoptera musculus': 'images/blue_whale.jpg',
-                'Megaptera novaeangliae': 'images/humpback_whale.jpg',
-                'Balaenoptera physalus': 'images/fin_whale.jpg',
-                'Balaenoptera acutorostrata': 'images/minke_whale.jpg',
-                'Eubalaena glacialis': 'images/right_whale.jpg',
-                'Physeter macrocephalus': 'images/sperm_whale.jpg',
-                'Orcinus orca': 'images/orca.jpg',
-                'Globicephala melas': 'images/pilot_whale.jpg',
-                'Delphinus delphis': 'images/common_dolphin.jpg'
-            };
-            
-            // Extract just the genus and species (first two words)
-            const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
-            return imageMap[binomialName] || null;
-        }
-
-        getCommonName(scientificName) {
-            const nameMap = {
-                'Balaenoptera musculus': 'Blue Whale',
-                'Megaptera novaeangliae': 'Humpback Whale',
-                'Balaenoptera physalus': 'Fin Whale',
-                'Balaenoptera acutorostrata': 'Minke Whale',
-                'Eubalaena glacialis': 'North Atlantic Right Whale',
-                'Physeter macrocephalus': 'Sperm Whale',
-                'Orcinus orca': 'Killer Whale',
-                'Globicephala melas': 'Long-finned Pilot Whale',
-                'Delphinus delphis': 'Common Dolphin'
-            };
-
-            const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
-            const mappedName = nameMap[binomialName];
-
-            if (mappedName) {
-                return mappedName;
-            } else {
-                return scientificName; 
-            }
-        }
-
-        createPopupContent(whale) {
-            const commonName = this.getCommonName(whale.scientificName);
-            const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
-            const imageUrl = this.getWhaleImageUrl(whale.scientificName);
-            const emoji = this.getWhaleEmoji(whale.scientificName);
-            
-            const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-
-            const popupHTML = `
-                <div class="whale-popup">
-                    <div class="whale-popup-header">
-                        ${imageUrl ? 
-                            `<img src="${imageUrl}" alt="${commonName}">` : 
-                            `<div class="whale-popup-emoji">${emoji}</div>`
+            setupEventListeners() {
+                // Modal close button
+                const modalCloseBtn = document.getElementById('modalClose');
+                if (modalCloseBtn) {
+                    modalCloseBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        this.closeWhaleModal();
+                    };
+                }
+                
+                // Modal background click to close
+                const whaleModal = document.getElementById('whaleModal');
+                if (whaleModal) {
+                    whaleModal.onclick = (e) => {
+                        if (e.target === whaleModal) {
+                            this.closeWhaleModal();
                         }
-                    </div>
-                    <div class="whale-popup-content">
-                        <div class="whale-popup-badge">Recent Sighting</div>
-                        <h3>${commonName}</h3>
-                        <p><strong>${humanReadableLocation}</strong></p>
-                        <div class="whale-popup-meta">
-                            <div class="whale-popup-meta-item">
-                                <span class="meta-icon">📅</span>
-                                <span>${date}</span>
-                            </div>
-                            <div class="whale-popup-meta-item">
-                                <span class="meta-icon">📍</span>
-                                <span>Coordinates: <span class="coordinates-display">${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</span></span>
-                            </div>
-                            ${whale.recordedBy ? 
-                                `<div class="whale-popup-meta-item">
-                                    <span class="meta-icon">👤</span>
-                                    <span>${whale.recordedBy}</span>
-                                </div>` : ''
+                    };
+                }
+                
+                // Escape key to close modal
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && document.getElementById('whaleModal').classList.contains('active')) {
+                        this.closeWhaleModal();
+                    }
+                });
+                
+                // Map view button
+                document.getElementById('mapViewBtn').addEventListener('click', () => {
+                    console.log('Map View Button Clicked!');
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('mapViewBtn').classList.add('active');
+                    document.getElementById('speciesFilter').classList.remove('active');
+                    
+                    // Reset map view to initial state
+                    this.map.setView(this.initialMapCenter, this.initialMapZoom);
+                });
+                
+                // Filter button
+                document.getElementById('filterBtn').addEventListener('click', () => {
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('filterBtn').classList.add('active');
+                    this.toggleSpeciesFilter();
+                });
+                
+                // Refresh button
+                document.getElementById('refreshBtn').addEventListener('click', () => {
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('refreshBtn').classList.add('active');
+                    this.refreshData();
+                });
+                
+                // Close species filter when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
+                        document.getElementById('speciesFilter').classList.remove('active');
+                    }
+                });
+                
+                // Handle window resize to switch between modal and popup
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        this.displayWhales(); // Recreate markers with appropriate interaction
+                    }, 250);
+                });
+            }
+
+            closeWhaleModal() {
+                document.getElementById('whaleModal').classList.remove('active');
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
+            }
+
+            async loadWhaleData() {
+                try {
+                    const whaleSpecies = [
+                        'Balaenoptera musculus',
+                        'Megaptera novaeangliae',
+                        'Balaenoptera physalus',
+                        'Balaenoptera acutorostrata',
+                        'Eubalaena glacialis',
+                        'Physeter macrocephalus',
+                        'Orcinus orca',
+                        'Globicephala melas',
+                        'Delphinus delphis'
+                    ];
+
+                    const allData = [];
+                    
+                    for (const species of whaleSpecies) {
+                        try {
+                            const response = await fetch(
+                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2025`
+                            );
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.results) {
+                                    allData.push(...data.results);
+                                }
+                            }
+                        } catch (error) {
+                            console.warn(`Failed to fetch data for ${species}:`, error);
+                        }
+                    }
+
+                    this.whaleData = allData.filter(record => 
+                        record.decimalLatitude && 
+                        record.decimalLongitude &&
+                        Math.abs(record.decimalLatitude) <= 90 &&
+                        Math.abs(record.decimalLongitude) <= 180
+                    );
+
+                    this.updateStats();
+                    this.displayWhales();
+                    this.createSpeciesFilter();
+                    
+                } catch (error) {
+                    console.error('Error loading whale data:', error);
+                    this.showErrorMessage();
+                }
+            }
+
+            displayWhales() {
+                this.markers.forEach(marker => this.map.removeLayer(marker));
+                this.markers = [];
+
+                this.whaleData.forEach(whale => {
+                    if (this.activeSpecies.size === 0 || this.activeSpecies.has(whale.scientificName)) {
+                        const marker = this.createWhaleMarker(whale);
+                        marker.addTo(this.map);
+                        this.markers.push(marker);
+                    }
+                });
+            }
+
+            createWhaleMarker(whale) {
+                const icon = L.divIcon({
+                    html: `<div class="whale-marker">${this.getWhaleEmoji(whale.scientificName)}</div>`,
+                    className: 'whale-marker-container',
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25]
+                });
+
+                const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
+                
+                // On mobile, use modal instead of popup
+                if (window.innerWidth <= 768) {
+                    marker.on('click', () => this.showWhaleModal(whale));
+                } else {
+                    // Desktop keeps the popup experience
+                    const popupContent = this.createPopupContent(whale);
+                    marker.bindPopup(popupContent, {
+                        maxWidth: 320,
+                        className: 'whale-popup-wrapper',
+                        autoPan: true,
+                        autoPanPaddingTopLeft: [20, 180],
+                        autoPanPaddingBottomRight: [20, 100],
+                        keepInView: true
+                    });
+                }
+
+                return marker;
+            }
+
+            showWhaleModal(whale) {
+                const modal = document.getElementById('whaleModal');
+                const modalImage = document.getElementById('modalImage');
+                const modalEmoji = document.getElementById('modalEmoji');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalLocation = document.getElementById('modalLocation');
+                const modalDate = document.getElementById('modalDate');
+                const modalCoords = document.getElementById('modalCoords');
+                const modalRecorder = document.getElementById('modalRecorder');
+                const modalRecorderSection = document.getElementById('modalRecorderSection');
+                
+                // Get whale data
+                const commonName = this.getCommonName(whale.scientificName);
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
+                const emoji = this.getWhaleEmoji(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
+                
+                // Set modal content
+                modalTitle.textContent = commonName;
+                modalLocation.textContent = location;
+                modalDate.textContent = date;
+                modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`;
+                
+                // Handle image/emoji
+                if (imageUrl) {
+                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
+                } else {
+                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
+                }
+                
+                // Handle recorder
+                if (whale.recordedBy) {
+                    modalRecorder.textContent = whale.recordedBy;
+                    modalRecorderSection.style.display = 'flex';
+                } else {
+                    modalRecorderSection.style.display = 'none';
+                }
+                
+                // Show modal
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            getWhaleEmoji(scientificName) {
+                const emojiMap = {
+                    'Balaenoptera musculus': '🐋',
+                    'Megaptera novaeangliae': '🐋',
+                    'Balaenoptera physalus': '🐋',
+                    'Balaenoptera acutorostrata': '🐋',
+                    'Eubalaena glacialis': '🐋',
+                    'Physeter macrocephalus': '🐋',
+                    'Orcinus orca': '🐋',
+                    'Globicephala melas': '🐋',
+                    'Delphinus delphis': '🐬'
+                };
+                
+                // Extract just the genus and species (first two words)
+                const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
+                return emojiMap[binomialName] || '🐋';
+            }
+
+            getWhaleImageUrl(scientificName) {
+                const imageMap = {
+                    'Balaenoptera musculus': 'images/blue_whale.jpg',
+                    'Megaptera novaeangliae': 'images/humpback_whale.jpg',
+                    'Balaenoptera physalus': 'images/fin_whale.jpg',
+                    'Balaenoptera acutorostrata': 'images/minke_whale.jpg',
+                    'Eubalaena glacialis': 'images/right_whale.jpg',
+                    'Physeter macrocephalus': 'images/sperm_whale.jpg',
+                    'Orcinus orca': 'images/orca.jpg',
+                    'Globicephala melas': 'images/pilot_whale.jpg',
+                    'Delphinus delphis': 'images/common_dolphin.jpg'
+                };
+                
+                // Extract just the genus and species (first two words)
+                const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
+                return imageMap[binomialName] || null;
+            }
+
+            getCommonName(scientificName) {
+                const nameMap = {
+                    'Balaenoptera musculus': 'Blue Whale',
+                    'Megaptera novaeangliae': 'Humpback Whale',
+                    'Balaenoptera physalus': 'Fin Whale',
+                    'Balaenoptera acutorostrata': 'Minke Whale',
+                    'Eubalaena glacialis': 'North Atlantic Right Whale',
+                    'Physeter macrocephalus': 'Sperm Whale',
+                    'Orcinus orca': 'Killer Whale',
+                    'Globicephala melas': 'Long-finned Pilot Whale',
+                    'Delphinus delphis': 'Common Dolphin'
+                };
+
+                const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
+                const mappedName = nameMap[binomialName];
+
+                if (mappedName) {
+                    return mappedName;
+                } else {
+                    return scientificName; 
+                }
+            }
+
+            createPopupContent(whale) {
+                const commonName = this.getCommonName(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
+                const emoji = this.getWhaleEmoji(whale.scientificName);
+                
+                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
+
+                const popupHTML = `
+                    <div class="whale-popup">
+                        <div class="whale-popup-header">
+                            ${imageUrl ? 
+                                `<img src="${imageUrl}" alt="${commonName}">` : 
+                                `<div class="whale-popup-emoji">${emoji}</div>`
                             }
                         </div>
+                        <div class="whale-popup-content">
+                            <div class="whale-popup-badge">Recent Sighting</div>
+                            <h3>${commonName}</h3>
+                            <p><strong>${humanReadableLocation}</strong></p>
+                            <div class="whale-popup-meta">
+                                <div class="whale-popup-meta-item">
+                                    <span class="meta-icon">📅</span>
+                                    <span>${date}</span>
+                                </div>
+                                <div class="whale-popup-meta-item">
+                                    <span class="meta-icon">📍</span>
+                                    <span>Coordinates: <span class="coordinates-display">${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</span></span>
+                                </div>
+                                ${whale.recordedBy ? 
+                                    `<div class="whale-popup-meta-item">
+                                        <span class="meta-icon">👤</span>
+                                        <span>${whale.recordedBy}</span>
+                                    </div>` : ''
+                                }
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
 
-            return popupHTML;
-        }
+                return popupHTML;
+            }
 
-        getCanonicalScientificName(fullScientificName) {
-            return fullScientificName.split(' ').slice(0, 2).join(' ');
-        }
+            getCanonicalScientificName(fullScientificName) {
+                return fullScientificName.split(' ').slice(0, 2).join(' ');
+            }
 
-        createSpeciesFilter() {
-            const speciesList = document.getElementById('speciesList');
-            speciesList.innerHTML = '';
+            createSpeciesFilter() {
+                const speciesList = document.getElementById('speciesList');
+                speciesList.innerHTML = '';
 
-            const uniqueSpeciesMap = new Map();
-            
-            this.whaleData.forEach(whale => {
-                const canonicalName = this.getCanonicalScientificName(whale.scientificName);
-                if (!uniqueSpeciesMap.has(canonicalName)) {
-                    uniqueSpeciesMap.set(canonicalName, whale.scientificName);
-                }
-            });
-            
-            const sortedCanonicalNames = Array.from(uniqueSpeciesMap.keys()).sort();
+                const uniqueSpeciesMap = new Map();
+                
+                this.whaleData.forEach(whale => {
+                    const canonicalName = this.getCanonicalScientificName(whale.scientificName);
+                    if (!uniqueSpeciesMap.has(canonicalName)) {
+                        uniqueSpeciesMap.set(canonicalName, whale.scientificName);
+                    }
+                });
+                
+                const sortedCanonicalNames = Array.from(uniqueSpeciesMap.keys()).sort();
 
-            sortedCanonicalNames.forEach(canonicalName => {
-                const originalFullScientificName = uniqueSpeciesMap.get(canonicalName);
-                const commonDisplayName = this.getCommonName(canonicalName);
-                const emoji = this.getWhaleEmoji(canonicalName);
+                sortedCanonicalNames.forEach(canonicalName => {
+                    const originalFullScientificName = uniqueSpeciesMap.get(canonicalName);
+                    const commonDisplayName = this.getCommonName(canonicalName);
+                    const emoji = this.getWhaleEmoji(canonicalName);
 
-                const tag = document.createElement('div');
-                tag.className = 'species-tag';
-                tag.innerHTML = `<span><span class="species-emoji">${emoji}</span>${commonDisplayName}</span>`;
-                tag.dataset.scientificName = originalFullScientificName;
-                tag.addEventListener('click', () => this.toggleSpeciesFilter(originalFullScientificName));
-                speciesList.appendChild(tag);
-            });
-        }
+                    const tag = document.createElement('div');
+                    tag.className = 'species-tag';
+                    tag.innerHTML = `<span><span class="species-emoji">${emoji}</span>${commonDisplayName}</span>`;
+                    tag.dataset.scientificName = originalFullScientificName;
+                    tag.addEventListener('click', () => this.toggleSpeciesFilter(originalFullScientificName));
+                    speciesList.appendChild(tag);
+                });
+            }
 
-        toggleSpeciesFilter(fullScientificName) {
-            if (fullScientificName) {
-                if (this.activeSpecies.has(fullScientificName)) {
-                    this.activeSpecies.delete(fullScientificName);
+            toggleSpeciesFilter(fullScientificName) {
+                if (fullScientificName) {
+                    if (this.activeSpecies.has(fullScientificName)) {
+                        this.activeSpecies.delete(fullScientificName);
+                    } else {
+                        this.activeSpecies.add(fullScientificName);
+                    }
+                    this.displayWhales();
+                    this.updateSpeciesFilterUI();
                 } else {
-                    this.activeSpecies.add(fullScientificName);
+                    document.getElementById('speciesFilter').classList.toggle('active');
                 }
-                this.displayWhales();
-                this.updateSpeciesFilterUI();
-            } else {
-                document.getElementById('speciesFilter').classList.toggle('active');
+            }
+
+            updateSpeciesFilterUI() {
+                const tags = document.querySelectorAll('.species-tag');
+                
+                tags.forEach(tag => {
+                    const scientificNameFromTag = tag.dataset.scientificName;
+
+                    if (this.activeSpecies.has(scientificNameFromTag)) {
+                        tag.classList.add('active');
+                    } else {
+                        tag.classList.remove('active');
+                    }
+                });
+            }
+
+            async refreshData() {
+                const btn = document.getElementById('refreshBtn');
+                btn.classList.add('loading');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<span class="btn-icon">⏳</span><span>Loading...</span>';
+                
+                await this.loadWhaleData();
+                
+                setTimeout(() => {
+                    btn.classList.remove('loading');
+                    btn.innerHTML = originalContent;
+                }, 500);
+            }
+
+            updateStats() {
+                document.getElementById('sightingCount').textContent = this.whaleData.length;
+                document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            hideLoading() {
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                }, 1500);
+            }
+
+            showErrorMessage() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.querySelector('.whale-spinner').textContent = '🌊';
+                overlay.querySelector('.loading-text').textContent = 'Unable to connect to whale tracking network';
+                overlay.querySelector('.loading-dots').style.display = 'none';
             }
         }
 
-        updateSpeciesFilterUI() {
-            const tags = document.querySelectorAll('.species-tag');
-            
-            tags.forEach(tag => {
-                const scientificNameFromTag = tag.dataset.scientificName;
-
-                if (this.activeSpecies.has(scientificNameFromTag)) {
-                    tag.classList.add('active');
-                } else {
-                    tag.classList.remove('active');
-                }
-            });
-        }
-
-        async refreshData() {
-            const btn = document.getElementById('refreshBtn');
-            btn.classList.add('loading');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<span class="btn-icon">⏳</span><span>Loading...</span>';
-            
-            await this.loadWhaleData();
-            
-            setTimeout(() => {
-                btn.classList.remove('loading');
-                btn.innerHTML = originalContent;
-            }, 500);
-        }
-
-        updateStats() {
-            document.getElementById('sightingCount').textContent = this.whaleData.length;
-            document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
-            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
-
-        hideLoading() {
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 1500);
-        }
-
-        showErrorMessage() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.querySelector('.whale-spinner').textContent = '🌊';
-            overlay.querySelector('.loading-text').textContent = 'Unable to connect to whale tracking network';
-            overlay.querySelector('.loading-dots').style.display = 'none';
-        }
-    }
-
-    // Initialize the app
-    window.addEventListener('load', () => {
-        new WhaleTracker();
-    });
-</script>
+        // Initialize the app
+        window.addEventListener('load', () => {
+            new WhaleTracker();
+        });
+    </script>
 </body>
 </html>
