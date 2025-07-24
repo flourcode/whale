@@ -318,9 +318,9 @@ async loadWhaleData() {
                     
                     for (const species of whaleSpecies) {
                         try {
-                            // Corrected line: Use 'startYear,endYear' format for the year range
+                            // Changed year to '2025' for current year only
                             const response = await fetch(
-                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2023,2025` // Changed to 2023,2025
+                                `https://api.gbif.org/v1/occurrence/search?scientificName=${encodeURIComponent(species)}&hasCoordinate=true&hasGeospatialIssue=false&limit=50&year=2025`
                             );
                             
                             if (response.ok) {
@@ -350,7 +350,7 @@ async loadWhaleData() {
                     this.showErrorMessage();
                 }
             }
-            displayWhales() {
+			displayWhales() {
                 // Clear existing markers
                 this.markers.forEach(marker => this.map.removeLayer(marker));
                 this.markers = [];
