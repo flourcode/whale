@@ -354,7 +354,6 @@
                     attributionControl: false
                 }).setView([20, -140], 3);
 
-                // Using the Esri Ocean Base map tiles as requested
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                     attribution: 'Tiles &copy; Esri',
                     maxZoom: 18
@@ -495,26 +494,29 @@
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
-                const fullScientificName = whale.species || whale.scientificName;
+                // Use 'species' field if available for full scientific name, otherwise 'scientificName'
+                const displayScientificName = whale.species || whale.scientificName;
 
-                // Human-readable location fallback based on existing data fields in GBIF
-                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Oceanic Sighting';
+                // Consolidate location and coordinates
+                const locationAndCoords = [];
+                const humanReadableLocation = whale.locality || whale.stateProvince || whale.country;
+                
+                if (humanReadableLocation && humanReadableLocation !== 'Oceanic Sighting') { // Add Oceanic Sighting exclusion
+                    locationAndCoords.push(humanReadableLocation);
+                } else {
+                    locationAndCoords.push('Oceanic Sighting'); // Default if locality/state/country are empty
+                }
+                locationAndCoords.push(`<span class="coordinates-display">(${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)})</span>`);
 
                 const popupDiv = document.createElement('div');
                 popupDiv.className = 'whale-popup';
                 popupDiv.innerHTML = `
                     <h3>${commonName}</h3>
                     ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
-                    <p><strong>Scientific name:</strong> ${fullScientificName}</p>
-                    <p><strong>Location:</strong> ${humanReadableLocation}</p>
-                    <p>
-                        <strong>Coordinates:</strong> 
-                        <span class="coordinates-display">
-                            ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}
-                        </span>
-                    </p>
+                    <p><strong>Scientific name:</strong> ${displayScientificName}</p>
+                    <p><strong>Location:</strong> ${locationAndCoords.join(' ')}</p>
                     <p class="date">Recorded: ${date}</p>
-                    ${whale.recordedBy ? `<p><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
+                    ${/* Removed "Recorded by" section */''}
                 `;
 
                 return popupDiv;
@@ -641,7 +643,6 @@
                 btn.classList.add('loading');
                 btn.textContent = '🔄 Loading...';
                 
-                // No locationCache to clear now as geocoding APIs are removed
                 await this.loadWhaleData();
                 this.resetButton(btn, '🔄 Refresh');
             }
