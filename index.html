@@ -5,123 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🐋 Whale Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
+        /* --- Base Styles (Desktop-first approach) --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #6a85b6 0%, #bac8e0 100%); /* Muted blue-grey gradient */
-            color: #333; /* Darker text for better contrast on lighter background */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
         }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5; /* Very light background, almost white */
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        /* Header Styling - Minimalist and Clean, like the example app's top bar */
         .header {
-            background: rgba(45, 52, 54, 0.7); /* Muted dark grey with transparency */
-            backdrop-filter: blur(8px);
-            padding: 1.2rem; /* Slightly more padding */
+            background-color: #FFFFFF; /* White background */
+            padding: 1rem 0; /* Vertical padding, no horizontal for full width */
             text-align: center;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            color: white; /* White text for header */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Very subtle shadow */
+            border-bottom-left-radius: 20px; /* Rounded bottom corners matching example */
+            border-bottom-right-radius: 20px;
+            height: 60px; /* Fixed height for consistent top bar */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center content */
         }
 
         .header h1 {
-            font-size: 1.8rem; /* Slightly larger heading */
-            margin-bottom: 0.6rem;
-            color: #e0e0e0; /* Lighter color for heading */
-        }
-
-        .stats {
+            font-size: 1.4rem; /* Modern font size */
+            font-weight: 600; /* Semi-bold */
+            color: #333333;
+            letter-spacing: -0.01em;
             display: flex;
-            justify-content: space-around;
-            font-size: 0.85rem; /* Slightly larger stats font */
-            opacity: 0.95;
-            color: #c0c0c0; /* Lighter grey for stats */
+            align-items: center;
+            gap: 8px; /* Space between emoji and text */
         }
 
+        .header h1 .emoji {
+            font-size: 1.2rem;
+            color: #5C6BC0; /* A soft blue/purple accent color */
+        }
+
+        /* Stats - Re-introduced below header, subtle styling */
+        .stats {
+            display: flex; /* Make them visible */
+            justify-content: center; /* Center align stats */
+            font-size: 0.8rem; /* Slightly smaller for subtle display */
+            font-weight: 400;
+            color: #666666;
+            padding: 5px 0; /* Vertical padding */
+            background-color: #F8F8F8; /* Subtle background for stats bar */
+            position: fixed; /* Fix below header */
+            top: 60px; /* Below header */
+            left: 0;
+            right: 0;
+            z-index: 990; /* Below header, above map */
+            border-bottom: 1px solid #EAEAEA; /* Light separator */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03); /* Very subtle shadow */
+            gap: 15px; /* Space between stats */
+        }
+        .stats span {
+            padding: 0;
+        }
+        .stats span:not(:last-child) {
+            border-right: none;
+        }
+
+        /* Map Container & Map */
         .map-container {
             height: 100vh;
             width: 100%;
             position: relative;
-            margin-top: 80px;
+            /* Adjusted margin-top for header + stats bar */
+            margin-top: calc(60px + 35px); /* Header (60px) + Stats (approx 35px including padding) */
+            border-radius: 20px; /* Matches app container rounding */
+            overflow: hidden; /* Ensures map content respects border-radius */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* Subtle shadow for the map area */
         }
 
         #map {
-            height: calc(100vh - 200px);
+            /* Default height for desktop/larger screens */
+            height: calc(100vh - (60px + 35px) - 90px); /* Total VH - header - stats - bottom nav */
             width: 100%;
         }
+        
+        .leaflet-container {
+            touch-action: pan-y !important;
+        }
 
-        /* NEW: Greyscale filter for map tiles */
+        /* Greyscale map for contrast with colorful whale markers */
         #map .leaflet-tile-pane .leaflet-tile {
             filter: grayscale(100%);
             transition: filter 0.3s ease-in-out;
         }
 
+        /* Controls / Bottom Navigation Bar - Aligned with example app */
         .controls {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(45, 52, 54, 0.9); /* Muted dark grey with more opacity */
-            backdrop-filter: blur(12px);
-            padding: 1rem 0; /* Adjusted padding */
+            background-color: #FFFFFF;
+            padding: 10px 0;
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.08); /* Soft shadow from example */
+            height: 90px; /* Fixed height for bottom nav bar */
+            border-top-left-radius: 20px; /* Rounded top corners like example */
+            border-top-right-radius: 20px;
+            padding-bottom: env(safe-area-inset-bottom); /* For iPhone safe areas */
         }
 
         .control-btn {
-            background: linear-gradient(45deg, #81c784 0%, #4caf50 100%); /* Softer green gradient */
+            background-color: transparent;
             border: none;
-            color: white;
-            padding: 0.9rem 1.5rem; /* More padding for a bolder button */
-            border-radius: 30px; /* More rounded */
-            font-size: 1rem; /* Slightly larger font */
-            font-weight: 600;
+            color: #AAAAAA; /* Muted grey for inactive icons/text */
+            padding: 8px 10px;
+            border-radius: 10px; /* Soft rounding for touch feedback */
+            font-size: 0.85rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Softer shadow */
-            letter-spacing: 0.5px; /* Slight letter spacing */
+            transition: all 0.2s ease-in-out;
+            box-shadow: none;
+            letter-spacing: normal; /* Normal letter spacing */
+            text-transform: none; /* No uppercase */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1; /* Distribute space evenly */
+            max-width: 100px;
+        }
+
+        .control-btn .icon {
+            font-size: 1.8rem; /* Larger icon size, like example */
+            margin-bottom: 2px;
         }
 
         .control-btn:hover {
-            transform: translateY(-3px); /* More pronounced hover */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
+            background-color: #F0F2F5; /* Light background on hover */
+            transform: translateY(-2px); /* Subtle lift */
+            box-shadow: none;
         }
-
-        .control-btn:active {
-            transform: translateY(0);
+        .control-btn.active { /* Style for active nav item (e.g., if this button corresponds to current view) */
+            color: #5C6BC0; /* Accent color for active */
         }
-
+        .control-btn.active .icon {
+            color: #5C6BC0;
+        }
         .control-btn.loading {
-            background: #666;
+            background-color: #E0E0E0;
             cursor: not-allowed;
+            color: #AAAAAA;
+            transform: none;
+            box-shadow: none;
         }
 
+        /* Species Filter - Matches example's card/list style */
         .species-filter {
-            position: fixed;
-            top: 80px;
-            left: 0;
-            right: 0;
-            background: rgba(45, 52, 54, 0.85); /* Muted dark grey with transparency */
-            backdrop-filter: blur(10px);
-            padding: 1rem;
+            background-color: #FFFFFF; /* White background */
+            padding: 1.5rem; /* Generous padding like example cards */
             display: none;
             z-index: 999;
-            max-height: 200px;
+            /* Recalculate max-height based on header+stats and bottom nav */
+            max-height: calc(100vh - (60px + 35px) - 90px - 20px); /* Fit between header/stats and bottom nav with margins */
             overflow-y: auto;
-            border-radius: 0 0 8px 8px; /* Rounded bottom corners */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px; /* Rounded corners like example */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            position: absolute; /* Changed to absolute to float over map */
+            top: calc(60px + 35px + 10px); /* Below header + stats with small margin */
+            left: 20px; /* Margin from left */
+            right: 20px; /* Margin from right */
+            bottom: 100px; /* Above bottom nav with small margin */
         }
 
         .species-filter.active {
@@ -130,80 +206,104 @@
 
         .species-list {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            flex-direction: column; /* Stack tags vertically as list items */
+            gap: 12px; /* Space between list items */
         }
 
         .species-tag {
-            background: rgba(189, 195, 199, 0.2); /* Muted light grey with transparency */
-            border: 1px solid #95a5a6; /* Muted border color */
-            color: #f0f0f0; /* Lighter text for tags */
-            padding: 0.6rem 1.1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            background-color: #F8F8F8; /* Light background for list items */
+            border: 1px solid #E0E0E0; /* Subtle border */
+            color: #333333;
+            padding: 0.8rem 1.2rem; /* Generous padding */
+            border-radius: 12px; /* Soft rounding */
+            font-size: 0.95rem; /* Slightly larger text */
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03); /* Very soft shadow */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .species-tag::after { /* Placeholder for right arrow icon */
+            content: '→'; /* Unicode arrow */
+            font-size: 1.2em;
+            color: #AAAAAA;
+            margin-left: 10px;
         }
 
-        .species-tag:hover, .species-tag.active {
-            background: #4caf50; /* Matches button gradient start color */
-            border-color: #4caf50;
-            transform: scale(1.03); /* Subtle scale */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        .species-tag:hover {
+            background-color: #EFEFEF;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
         }
 
-        /* Popup styling */
+        .species-tag.active {
+            background-color: #E8F0FE; /* Very light blue for active filter */
+            border-color: #B3D9FF;
+            color: #5C6BC0; /* Matching accent blue */
+            transform: scale(1);
+            box-shadow: none;
+        }
+
+        /* Popup styling - Clean, Soft, and Rounded like example cards */
         .whale-popup {
-            max-width: 280px;
-            font-family: inherit;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            margin: 0; /* Crucial: ensure no margin */
-            border: none; /* Crucial: ensure no border */
+            max-width: 300px;
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            border: none;
         }
 
         .whale-popup h3 {
-            color: #2c3e50;
-            margin-bottom: 0.6rem;
             font-size: 1.2rem;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 0.5rem;
+            text-align: center; /* Center aligned title */
+            letter-spacing: -0.01em;
         }
 
-        /* Microdata/compact display adjustments */
         .whale-popup p {
-            color: #555;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem; /* Increased margin slightly for readability of longer sentence */
-            line-height: 1.4; /* Slightly more space between lines */
+            color: #555555;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            line-height: 1.4;
         }
 
         .whale-popup p strong {
-            font-weight: 600;
-            font-size: 0.9rem; /* Slightly smaller label font size */
+            font-weight: 500;
+            color: #333333;
         }
 
         .whale-popup .coordinates-display {
-            font-size: 0.85rem; /* Make coordinates slightly smaller */
-            color: #7f8c8d; /* Muted color for coordinates */
-            display: inline; /* Keep on same line */
-            white-space: nowrap; /* Prevent line breaks within the string */
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            color: #888888;
+            display: inline;
+            white-space: nowrap;
         }
 
-        .whale-popup .date {
-            color: #7f8c8d;
-            font-size: 0.85rem; /* Match coordinates font size */
-            font-style: italic;
+        .whale-popup .date, .whale-popup .recorded-by {
+            font-size: 0.75rem;
+            color: #777777;
+            font-style: normal;
+            margin-top: 0.2rem;
         }
 
-        .whale-popup .recorded-by { /* New class for recorded by line */
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            margin-top: 0.5rem;
-            font-style: italic;
+        .whale-popup img {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            width: 100%;
+            max-height: 140px;
+            object-fit: cover;
+            margin-bottom: 10px;
         }
-        
-        /* Leaflet popup container overrides */
+
+        /* Leaflet popup container overrides - Ensure they match popup card style */
         .leaflet-popup-content-wrapper {
             background: transparent !important;
             padding: 0 !important;
@@ -219,24 +319,24 @@
         }
 
         .leaflet-popup-tip {
-            background: white !important; /* Match the popup background */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Match the popup shadow */
+            background-color: #FFFFFF !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
 
-
+        /* Loading Overlay - Clean and Simple */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(45, 52, 54, 0.95);
+            background-color: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
         }
 
         .loading-overlay.hidden {
@@ -245,55 +345,37 @@
 
         .whale-spinner {
             font-size: 3rem;
-            animation: swim 2s ease-in-out infinite;
+            animation: pulse 1.5s infinite ease-out;
+            color: #5C6BC0; /* Match primary accent color */
         }
-
-        @keyframes swim {
-            0%, 100% { transform: translateX(-10px) rotate(-5deg); }
-            50% { transform: translateX(10px) rotate(5deg); }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .loading-text {
+            font-family: 'Inter', sans-serif;
             margin-top: 1rem;
-            font-size: 1.2rem;
-            opacity: 0.9;
-            color: #e0e0e0;
+            font-size: 0.9rem; /* Smaller for loading */
+            font-weight: 500;
+            color: #555555;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.3;
         }
 
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.2rem;
-            }
-            
-            .stats {
-                font-size: 0.7rem;
-            }
-            
-            .control-btn {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.8rem;
-            }
-            /* Adjustments for mobile popup */
-            .whale-popup p {
-                font-size: 0.9rem;
-                margin-bottom: 0.3rem; /* Slightly reduced for mobile */
-            }
-            .whale-popup p strong {
-                font-size: 0.85rem;
-            }
-            .whale-popup .coordinates-display {
-                font-size: 0.8rem;
-            }
-            .whale-popup .recorded-by {
-                font-size: 0.8rem;
-            }
-        }
-
+        /* Custom icon base styling for consistency */
+        /* These styles make the emojis stand out over the map */
         .custom-whale-icon {
-            background: #81c784;
-            border: 3px solid white;
+            background-color: #5C6BC0; /* Match primary accent blue */
+            border: 3px solid #FFFFFF;
             border-radius: 50%;
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .whale-emoji-icon {
@@ -301,9 +383,15 @@
             border: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            font-size: 28px;
+            font-size: 28px; /* Size for the emoji itself */
             text-align: center;
-            line-height: 30px;
+            line-height: 1; /* For vertical alignment of emoji */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.4); /* Subtle glow for better visibility on map */
         }
     </style>
 </head>
@@ -314,13 +402,14 @@
     </div>
 
     <header class="header">
-        <h1>🐋 Whale Tracker</h1>
-        <div class="stats">
-            <span>Sightings: <span id="sightingCount">0</span></span>
-            <span>Species: <span id="speciesCount">0</span></span>
-            <span>Last Update: <span id="lastUpdate">Loading...</span></span>
-        </div>
+        <h1><span class="emoji">🐋</span> Whale Tracker</h1>
     </header>
+
+    <div class="stats">
+        <span>Sightings: <span id="sightingCount">0</span></span>
+        <span>Species: <span id="speciesCount">0</span></span>
+        <span>Last Update: <span id="lastUpdate">Loading...</span></span>
+    </div>
 
     <div class="species-filter" id="speciesFilter">
         <div class="species-list" id="speciesList">
@@ -332,9 +421,15 @@
     </div>
 
     <div class="controls">
-        <button class="control-btn" id="refreshBtn">🔄 Refresh</button>
-        <button class="control-btn" id="filterBtn">🏷️ Filter</button>
-        <button class="control-btn" id="locateBtn">📍 My Location</button>
+        <button class="control-btn active" id="mapViewBtn">
+            <span class="icon">🗺️</span> Map
+        </button>
+        <button class="control-btn" id="filterBtn">
+            <span class="icon">🏷️</span> Filter
+        </button>
+        <button class="control-btn" id="refreshBtn">
+            <span class="icon">🔄</span> Refresh
+        </button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -345,7 +440,7 @@
                 this.whaleData = [];
                 this.markers = [];
                 this.activeSpecies = new Set();
-                this.userLocation = null;
+                // Removed this.userLocation as "My Location" is removed
                 
                 this.init();
             }
@@ -355,13 +450,14 @@
                 this.setupEventListeners();
                 await this.loadWhaleData();
                 this.hideLoading();
+                this.updateStats(); // Ensure stats are updated
             }
 
             initMap() {
                 this.map = L.map('map', {
                     zoomControl: false,
                     attributionControl: false
-                }).setView([20, -140], 3);
+                }).setView([20, -140], 3); // Centered on Pacific Ocean for global view
 
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
                     attribution: 'Tiles &copy; Esri',
@@ -376,12 +472,21 @@
             setupEventListeners() {
                 document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
                 document.getElementById('filterBtn').addEventListener('click', () => this.toggleSpeciesFilter());
-                document.getElementById('locateBtn').addEventListener('click', () => this.locateUser());
+                // Removed event listener for "My Location" button
+                // document.getElementById('locateBtn').addEventListener('click', () => this.locateUser());
 
                 document.addEventListener('click', (e) => {
+                    // Close species filter if clicking outside
                     if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
                         document.getElementById('speciesFilter').classList.remove('active');
                     }
+                });
+
+                // Example of how you might activate the "Map" button in bottom nav
+                document.getElementById('mapViewBtn').addEventListener('click', () => {
+                    // Logic to ensure map view is active if you had multiple views
+                    console.log('Map View Button Clicked!');
+                    // This button is active by default in the HTML for visual representation
                 });
             }
 
@@ -425,7 +530,7 @@
                         Math.abs(record.decimalLongitude) <= 180
                     );
 
-                    this.updateStats();
+                    this.updateStats(); // Update stats after data load
                     this.displayWhales();
                     this.createSpeciesFilter();
                     
@@ -497,31 +602,51 @@
                 return imageMap[scientificName] || 'images/default_whale.jpg';
             }
 
+            getCommonName(scientificName) {
+                const nameMap = {
+                    'Balaenoptera musculus': 'Blue Whale',
+                    'Megaptera novaeangliae': 'Humpback Whale',
+                    'Balaenoptera physalus': 'Fin Whale',
+                    'Balaenoptera acutorostrata': 'Minke Whale',
+                    'Eubalaena glacialis': 'North Atlantic Right Whale',
+                    'Physeter macrocephalus': 'Sperm Whale',
+                    'Orcinus orca': 'Killer Whale',
+                    'Globicephala melas': 'Long-finned Pilot Whale',
+                    'Delphinus delphis': 'Common Dolphin'
+                };
+
+                const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
+                const mappedName = nameMap[binomialName];
+
+                if (mappedName) {
+                    return mappedName;
+                } else {
+                    return scientificName; 
+                }
+            }
+
             createPopupContent(whale) {
-                const commonName = this.getCommonName(whale.scientificName);
+                const commonNameForSentence = this.getCommonName(whale.scientificName); 
+                const gbifScientificNameWithAuthor = whale.species || whale.scientificName; 
+
+                let h3Title = commonNameForSentence;
+                if (h3Title === whale.scientificName && gbifScientificNameWithAuthor.split(' ').length > 2) {
+                     h3Title = gbifScientificNameWithAuthor.split(' ').slice(0, 2).join(' ');
+                }
+                
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
-                // Use the full GBIF scientific name, which often includes author and year
-                const gbifScientificNameWithAuthor = whale.species || whale.scientificName; 
-
                 let scientificNameDetail = '';
-                // Only show a separate scientific name line if:
-                // 1. The common name is different from the full GBIF scientific name (e.g., "Humpback Whale" vs "Megaptera novaeangliae (Borowski, 1781)")
-                // 2. Or, if there's no specific common name mapped, and the scientific name itself contains author/year details
-                if (commonName !== gbifScientificNameWithAuthor) {
-                    scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificNameWithAuthor}</p>`;
-                } else if (commonName === whale.scientificName && gbifScientificNameWithAuthor.includes(' ')) { // Fallback for cases like "Orcinus orca", where common name is same as scientific, but want to show full scientific
+                if (h3Title !== gbifScientificNameWithAuthor) {
                     scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificNameWithAuthor}</p>`;
                 }
                 
-                // Human-readable location fallback based on existing data fields in GBIF
                 const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'the vast ocean';
 
-                // Construct the main descriptive sentence, starting with the common name
                 const mainDescription = `
                     <p>
-                        The <strong>${commonName}</strong> 
+                        The <strong>${commonNameForSentence}</strong> 
                         ${date !== 'Unknown date' ? `was spotted on ${date}` : 'was spotted'}
                         near <strong>${humanReadableLocation}</strong> 
                         <span class="coordinates-display">(${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)})</span>.
@@ -531,52 +656,54 @@
                 const popupDiv = document.createElement('div');
                 popupDiv.className = 'whale-popup';
                 popupDiv.innerHTML = `
-                    <h3>${commonName}</h3> {/* Always use the common name (or scientific if no common mapping) here */}
-                    ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
-                    ${scientificNameDetail} {/* Conditionally display full scientific name with author/year */}
-                    ${mainDescription} {/* The main human-readable sentence */}
+                    <h3>${h3Title}</h3>
+                    ${imageUrl ? `<img src="${imageUrl}" alt="${commonNameForSentence}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
+                    ${scientificNameDetail}
+                    ${mainDescription}
                     ${whale.recordedBy ? `<p class="recorded-by"><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
                 `;
 
                 return popupDiv;
             }
 
-            getCommonName(scientificName) {
-                const nameMap = {
-                    'Balaenoptera musculus': 'Blue Whale',
-                    'Megaptera novaeangliae': 'Humpback Whale',
-                    'Balaenoptera physalus': 'Fin Whale',
-                    'Balaenoptera acutorostrata': 'Minke Whale',
-                    'Eubalaena glacialis': 'North Atlantic Right Whale',
-                    'Physeter macrocephalus': 'Sperm Whale',
-                    'Orcinus orca': 'Killer Whale (Orca)',
-                    'Globicephala melas': 'Long-finned Pilot Whale',
-                    'Delphinus delphis': 'Common Dolphin'
-                };
-                return nameMap[scientificName] || scientificName;
+            getCanonicalScientificName(fullScientificName) {
+                return fullScientificName.split(' ').slice(0, 2).join(' ');
             }
 
             createSpeciesFilter() {
                 const speciesList = document.getElementById('speciesList');
-                const uniqueSpecies = [...new Set(this.whaleData.map(w => w.scientificName))];
-                
                 speciesList.innerHTML = '';
+
+                const uniqueSpeciesMap = new Map();
                 
-                uniqueSpecies.forEach(species => {
+                this.whaleData.forEach(whale => {
+                    const canonicalName = this.getCanonicalScientificName(whale.scientificName);
+                    if (!uniqueSpeciesMap.has(canonicalName)) {
+                        uniqueSpeciesMap.set(canonicalName, whale.scientificName);
+                    }
+                });
+                
+                const sortedCanonicalNames = Array.from(uniqueSpeciesMap.keys()).sort();
+
+                sortedCanonicalNames.forEach(canonicalName => {
+                    const originalFullScientificName = uniqueSpeciesMap.get(canonicalName);
+                    const commonDisplayName = this.getCommonName(canonicalName);
+
                     const tag = document.createElement('div');
                     tag.className = 'species-tag';
-                    tag.textContent = this.getCommonName(species);
-                    tag.addEventListener('click', () => this.toggleSpeciesFilter(species));
+                    tag.textContent = commonDisplayName;
+                    tag.dataset.scientificName = originalFullScientificName; 
+                    tag.addEventListener('click', () => this.toggleSpeciesFilter(originalFullScientificName));
                     speciesList.appendChild(tag);
                 });
             }
 
-            toggleSpeciesFilter(species = null) {
-                if (species) {
-                    if (this.activeSpecies.has(species)) {
-                        this.activeSpecies.delete(species);
+            toggleSpeciesFilter(fullScientificName) {
+                if (fullScientificName) {
+                    if (this.activeSpecies.has(fullScientificName)) {
+                        this.activeSpecies.delete(fullScientificName);
                     } else {
-                        this.activeSpecies.add(species);
+                        this.activeSpecies.add(fullScientificName);
                     }
                     this.displayWhales();
                     this.updateSpeciesFilterUI();
@@ -587,74 +714,16 @@
 
             updateSpeciesFilterUI() {
                 const tags = document.querySelectorAll('.species-tag');
-                const nameMap = {
-                    'Balaenoptera musculus': 'Blue Whale',
-                    'Megaptera novaeangliae': 'Humpback Whale',
-                    'Balaenoptera physalus': 'Fin Whale',
-                    'Balaenoptera acutorostrata': 'Minke Whale',
-                    'Eubalaena glacialis': 'North Atlantic Right Whale',
-                    'Physeter macrocephalus': 'Sperm Whale',
-                    'Orcinus orca': 'Killer Whale (Orca)',
-                    'Globicephala melas': 'Long-finned Pilot Whale',
-                    'Delphinus delphis': 'Common Dolphin'
-                };
                 
                 tags.forEach(tag => {
-                    let scientificName = null;
-                    for (const key in nameMap) {
-                        if (nameMap[key] === tag.textContent) {
-                            scientificName = key;
-                            break;
-                        }
-                    }
+                    const scientificNameFromTag = tag.dataset.scientificName; 
 
-                    if (scientificName && this.activeSpecies.has(scientificName)) {
+                    if (this.activeSpecies.has(scientificNameFromTag)) {
                         tag.classList.add('active');
                     } else {
                         tag.classList.remove('active');
                     }
                 });
-            }
-
-            async locateUser() {
-                const btn = document.getElementById('locateBtn');
-                btn.classList.add('loading');
-                btn.textContent = '📍 Locating...';
-
-                if (!navigator.geolocation) {
-                    alert('Geolocation is not supported by this browser.');
-                    this.resetButton(btn, '📍 My Location');
-                    return;
-                }
-
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        this.userLocation = [position.coords.latitude, position.coords.longitude];
-                        this.map.setView(this.userLocation, 8);
-                        
-                        if (this.userMarker) {
-                            this.map.removeLayer(this.userMarker);
-                        }
-                        
-                        this.userMarker = L.marker(this.userLocation, {
-                            icon: L.divIcon({
-                                html: '📍',
-                                className: 'custom-whale-icon',
-                                iconSize: [30, 30],
-                                iconAnchor: [15, 15]
-                            })
-                        }).addTo(this.map);
-                        
-                        this.userMarker.bindPopup('Your Location').openPopup();
-                        this.resetButton(btn, '📍 My Location');
-                    },
-                    (error) => {
-                        console.error('Geolocation error:', error);
-                        alert('Unable to get your location. Please try again.');
-                        this.resetButton(btn, '📍 My Location');
-                    },
-                    { timeout: 10000, enableHighAccuracy: true }
-                );
             }
 
             async refreshData() {
@@ -672,6 +741,7 @@
             }
 
             updateStats() {
+                // Update the stats display in the dedicated stats div
                 document.getElementById('sightingCount').textContent = this.whaleData.length;
                 document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
