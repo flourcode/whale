@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐋 Whale Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .map-container {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        #map {
+            height: calc(100vh - 200px);
+            width: 100%;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.loading {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .species-filter {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            display: none;
+            z-index: 999;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .species-filter.active {
+            display: block;
+        }
+
+        .species-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .species-tag {
+            background: rgba(79, 172, 254, 0.3);
+            border: 1px solid #4facfe;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .species-tag:hover, .species-tag.active {
+            background: #4facfe;
+            transform: scale(1.05);
+        }
+
+        .whale-popup {
+            max-width: 250px;
+            font-family: inherit;
+        }
+
+        .whale-popup h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .whale-popup p {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .whale-popup .date {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .whale-spinner {
+            font-size: 3rem;
+            animation: swim 2s ease-in-out infinite;
+        }
+
+        @keyframes swim {
+            0%, 100% { transform: translateX(-10px) rotate(-5deg); }
+            50% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .stats {
+                font-size: 0.7rem;
+            }
+            
+            .control-btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        .custom-whale-icon {
+            background: #4facfe;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="whale-spinner">🐋</div>
+        <div class="loading-text">Scanning the oceans for whales...</div>
+    </div>
+
+    <header class="header">
+        <h1>🐋 Whale Tracker</h1>
+        <div class="stats">
+            <span>Sightings: <span id="sightingCount">0</span></span>
+            <span>Species: <span id="speciesCount">0</span></span>
+            <span>Last Update: <span id="lastUpdate">Loading...</span></span>
+        </div>
+    </header>
+
+    <div class="species-filter" id="speciesFilter">
+        <div class="species-list" id="speciesList">
+            </div>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" id="refreshBtn">🔄 Refresh</button>
+        <button class="control-btn" id="filterBtn">🏷️ Filter</button>
+        <button class="control-btn" id="locateBtn">📍 My Location</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        class WhaleTracker {
+            constructor() {
+                this.map = null;
+                this.whaleData = [];
+                this.markers = [];
+                this.activeSpecies = new Set();
+                this.userLocation = null;
+                
+                this.init();
+            }
+
+            async init() {
+                this.initMap();
+                this.setupEventListeners();
+                await this.loadWhaleData();
+                this.hideLoading();
+            }
+
+            initMap() {
+                // Initialize map centered on Pacific Ocean (prime whale territory)
+                this.map = L.map('map', {
+                    zoomControl: false,
+                    attributionControl: false
+                }).setView([20, -140], 3);
+
+                // Use ocean-themed map tiles
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri',
+                    maxZoom: 18
+                }).addTo(this.map);
+
+                // Add zoom control to bottom right
+                L.control.zoom({
+                    position: 'bottomright'
+                }).addTo(this.map);
+            }
+
+            setupEventListeners() {
+                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
+                document.getElementById('filterBtn').addEventListener('click', () => this.toggleSpeciesFilter());
+                document.getElementById('locateBtn').addEventListener('click', () => this.locateUser());
+
+                // Close species filter when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
+                        document.getElementById('speciesFilter').classList.remove('active');
+                    }
+                });
+            }
+
+            async loadWhaleData() {
+                try {
+                    // This is where the error was. Assuming you want to fetch data.
+                    // Replace './whaleData.json' with your actual API endpoint or data source.
+                    const response = await fetch('./whaleData.json'); 
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+
+                    this.whaleData = data.filter(record =>
+                        record.decimalLatitude &&
+                        record.decimalLongitude &&
+                        Math.abs(record.decimalLatitude) <= 90 &&
+                        Math.abs(record.decimalLongitude) <= 180
+                    );
+
+                    this.updateStats();
+                    this.displayWhales();
+                    this.createSpeciesFilter();
+                    
+                } catch (error) {
+                    console.error('Error loading whale data:', error);
+                    this.showErrorMessage();
+                }
+            }
+
+            displayWhales() {
+                // Clear existing markers
+                this.markers.forEach(marker => this.map.removeLayer(marker));
+                this.markers = [];
+
+                this.whaleData.forEach(whale => {
+                    if (this.activeSpecies.size === 0 || this.activeSpecies.has(whale.scientificName)) {
+                        const marker = this.createWhaleMarker(whale);
+                        marker.addTo(this.map);
+                        this.markers.push(marker);
+                    }
+                });
+            }
+
+            createWhaleMarker(whale) {
+                const icon = L.divIcon({
+                    html: this.getWhaleEmoji(whale.scientificName),
+                    className: 'custom-whale-icon',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+
+                const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
+                
+                const popupContent = this.createPopupContent(whale);
+                marker.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'whale-popup'
+                });
+
+                return marker;
+            }
+
+            getWhaleEmoji(scientificName) {
+                const emojiMap = {
+                    'Balaenoptera musculus': '🐋', // Blue whale
+                    'Megaptera novaeangliae': '🐋', // Humpback whale
+                    'Balaenoptera physalus': '🐋', // Fin whale
+                    'Balaenoptera acutorostrata': '🐋', // Minke whale
+                    'Eubalaena glacialis': '🐋', // Right whale
+                    'Physeter macrocephalus': '🐋', // Sperm whale
+                    'Orcinus orca': '🐋', // Killer whale
+                    'Globicephala melas': '🐋', // Pilot whale
+                    'Delphinus delphis': '🐬' // Dolphin
+                };
+                return emojiMap[scientificName] || '🐋';
+            }
+
+            createPopupContent(whale) {
+                const commonName = this.getCommonName(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const location = whale.locality || whale.stateProvince || whale.country || 'Unknown location';
+                
+                return `
+                    <div class="whale-popup">
+                        <h3>${commonName}</h3>
+                        <p><strong>Scientific name:</strong> ${whale.scientificName}</p>
+                        <p><strong>Location:</strong> ${location}</p>
+                        <p><strong>Coordinates:</strong> ${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}</p>
+                        <p class="date">Recorded: ${date}</p>
+                        ${whale.recordedBy ? `<p><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
+                    </div>
+                `;
+            }
+
+            getCommonName(scientificName) {
+                const nameMap = {
+                    'Balaenoptera musculus': 'Blue Whale',
+                    'Megaptera novaeangliae': 'Humpback Whale',
+                    'Balaenoptera physalus': 'Fin Whale',
+                    'Balaenoptera acutorostrata': 'Minke Whale',
+                    'Eubalaena glacialis': 'North Atlantic Right Whale',
+                    'Physeter macrocephalus': 'Sperm Whale',
+                    'Orcinus orca': 'Killer Whale (Orca)',
+                    'Globicephala melas': 'Long-finned Pilot Whale',
+                    'Delphinus delphis': 'Common Dolphin'
+                };
+                return nameMap[scientificName] || scientificName;
+            }
+
+            createSpeciesFilter() {
+                const speciesList = document.getElementById('speciesList');
+                const uniqueSpecies = [];
+                
+                // Get unique species names
+                this.whaleData.forEach(whale => {
+                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
+                        uniqueSpecies.push(whale.scientificName);
+                    }
+                });
+                
+                speciesList.innerHTML = '';
+                
+                uniqueSpecies.forEach(species => {
+                    const tag = document.createElement('div');
+                    tag.className = 'species-tag';
+                    tag.textContent = this.getCommonName(species);
+                    tag.addEventListener('click', () => this.toggleSpeciesFilter(species));
+                    speciesList.appendChild(tag);
+                });
+            }
+
+            toggleSpeciesFilter(species) {
+                if (species) {
+                    if (this.activeSpecies.has(species)) {
+                        this.activeSpecies.delete(species);
+                    } else {
+                        this.activeSpecies.add(species);
+                    }
+                    this.displayWhales();
+                    this.updateSpeciesFilterUI();
+                } else {
+                    document.getElementById('speciesFilter').classList.toggle('active');
+                }
+            }
+
+            updateSpeciesFilterUI() {
+                const tags = document.querySelectorAll('.species-tag');
+                const nameMap = {
+                    'Balaenoptera musculus': 'Blue Whale',
+                    'Megaptera novaeangliae': 'Humpback Whale',
+                    'Balaenoptera physalus': 'Fin Whale',
+                    'Balaenoptera acutorostrata': 'Minke Whale',
+                    'Eubalaena glacialis': 'North Atlantic Right Whale',
+                    'Physeter macrocephalus': 'Sperm Whale',
+                    'Orcinus orca': 'Killer Whale (Orca)',
+                    'Globicephala melas': 'Long-finned Pilot Whale',
+                    'Delphinus delphis': 'Common Dolphin'
+                };
+                
+                tags.forEach(tag => {
+                    const species = Object.keys(nameMap).find(key => 
+                        nameMap[key] === tag.textContent
+                    );
+                    if (this.activeSpecies.has(species)) {
+                        tag.classList.add('active');
+                    } else {
+                        tag.classList.remove('active');
+                    }
+                });
+            }
+
+            async locateUser() {
+                const btn = document.getElementById('locateBtn');
+                btn.classList.add('loading');
+                btn.textContent = '📍 Locating...';
+
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by this browser.');
+                    this.resetButton(btn, '📍 My Location');
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        this.userLocation = [position.coords.latitude, position.coords.longitude];
+                        this.map.setView(this.userLocation, 8);
+                        
+                        // Add user location marker
+                        if (this.userMarker) {
+                            this.map.removeLayer(this.userMarker);
+                        }
+                        
+                        this.userMarker = L.marker(this.userLocation, {
+                            icon: L.divIcon({
+                                html: '📍',
+                                className: 'custom-whale-icon',
+                                iconSize: [30, 30],
+                                iconAnchor: [15, 15]
+                            })
+                        }).addTo(this.map);
+                        
+                        this.userMarker.bindPopup('Your Location').openPopup();
+                        this.resetButton(btn, '📍 My Location');
+                    },
+                    (error) => {
+                        console.error('Geolocation error:', error);
+                        alert('Unable to get your location. Please try again.');
+                        this.resetButton(btn, '📍 My Location');
+                    },
+                    { timeout: 10000, enableHighAccuracy: true }
+                );
+            }
+
+            async refreshData() {
+                const btn = document.getElementById('refreshBtn');
+                btn.classList.add('loading');
+                btn.textContent = '🔄 Loading...';
+                
+                await this.loadWhaleData();
+                this.resetButton(btn, '🔄 Refresh');
+            }
+
+            resetButton(btn, text) {
+                btn.classList.remove('loading');
+                btn.textContent = text;
+            }
+
+            updateStats() {
+                document.getElementById('sightingCount').textContent = this.whaleData.length;
+                
+                // Count unique species manually for better compatibility
+                var uniqueSpecies = [];
+                this.whaleData.forEach(function(whale) {
+                    if (uniqueSpecies.indexOf(whale.scientificName) === -1) {
+                        uniqueSpecies.push(whale.scientificName);
+                    }
+                });
+                
+                document.getElementById('speciesCount').textContent = uniqueSpecies.length;
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            }
+
+            hideLoading() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+
+            showErrorMessage() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.querySelector('.whale-spinner').textContent = '⚠️';
+                overlay.querySelector('.loading-text').textContent = 'Unable to load whale data. Please check your connection and try again.';
+            }
+        }
+
+        // Initialize the app when the page loads
+        window.addEventListener('load', () => {
+            new WhaleTracker();
+        });
+    </script>
+</body>
+</html>
