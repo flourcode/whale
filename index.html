@@ -497,26 +497,28 @@
                 return imageMap[scientificName] || 'images/default_whale.jpg';
             }
 
-            // Simplified createPopupContent - no async geocoding
             createPopupContent(whale) {
                 const commonName = this.getCommonName(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
 
                 // Use the full GBIF scientific name, which often includes author and year
-                const gbifScientificName = whale.species || whale.scientificName; 
+                const gbifScientificNameWithAuthor = whale.species || whale.scientificName; 
 
                 let scientificNameDetail = '';
-                // Only show a separate scientific name line if it's different from the common name
-                // (i.e., if it contains the author/year or is otherwise more specific than the common name)
-                if (commonName !== gbifScientificName) {
-                    scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificName}</p>`;
+                // Only show a separate scientific name line if:
+                // 1. The common name is different from the full GBIF scientific name (e.g., "Humpback Whale" vs "Megaptera novaeangliae (Borowski, 1781)")
+                // 2. Or, if there's no specific common name mapped, and the scientific name itself contains author/year details
+                if (commonName !== gbifScientificNameWithAuthor) {
+                    scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificNameWithAuthor}</p>`;
+                } else if (commonName === whale.scientificName && gbifScientificNameWithAuthor.includes(' ')) { // Fallback for cases like "Orcinus orca", where common name is same as scientific, but want to show full scientific
+                    scientificNameDetail = `<p><strong>Scientific name:</strong> ${gbifScientificNameWithAuthor}</p>`;
                 }
                 
                 // Human-readable location fallback based on existing data fields in GBIF
                 const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'the vast ocean';
 
-                // Construct the main descriptive sentence
+                // Construct the main descriptive sentence, starting with the common name
                 const mainDescription = `
                     <p>
                         The <strong>${commonName}</strong> 
@@ -529,10 +531,10 @@
                 const popupDiv = document.createElement('div');
                 popupDiv.className = 'whale-popup';
                 popupDiv.innerHTML = `
-                    <h3>${commonName}</h3>
+                    <h3>${commonName}</h3> {/* Always use the common name (or scientific if no common mapping) here */}
                     ${imageUrl ? `<img src="${imageUrl}" alt="${commonName}" style="width:100%; max-height:150px; object-fit:cover; margin-bottom: 10px; border-radius: 5px;">` : ''}
-                    ${scientificNameDetail}
-                    ${mainDescription}
+                    ${scientificNameDetail} {/* Conditionally display full scientific name with author/year */}
+                    ${mainDescription} {/* The main human-readable sentence */}
                     ${whale.recordedBy ? `<p class="recorded-by"><strong>Recorded by:</strong> ${whale.recordedBy}</p>` : ''}
                 `;
 
