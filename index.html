@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Base Styles (Desktop-first approach) --- */
+        /* --- Base Styles --- */
         * {
             margin: 0;
             padding: 0;
@@ -26,14 +26,14 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F0F2F5; /* Very light background, almost white */
-            color: #333333;
-            line-height: 1.6;
+            background-color: #FFFFFF; /* Pure white background */
+            color: #000000; /* Pure black text by default */
+            line-height: 1.5; /* Generous line-height for readability */
         }
 
-        /* Header Styling - Minimalist and Clean, like the example app's top bar */
+        /* Header Styling - Minimalist and High Contrast */
         .header {
-            background-color: #FFFFFF; /* White background */
+            background-color: #FFFFFF;
             padding: 1rem 0; /* Vertical padding, no horizontal for full width */
             text-align: center;
             position: fixed;
@@ -41,37 +41,38 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Very subtle shadow */
-            border-bottom-left-radius: 20px; /* Rounded bottom corners matching example */
-            border-bottom-right-radius: 20px;
-            height: 60px; /* Fixed height for consistent top bar */
+            box-shadow: none; /* No shadow */
+            border-bottom: 1px solid #EEEEEE; /* Very light, almost invisible border */
+            height: 60px; /* Fixed height */
             display: flex;
+            flex-direction: column; /* Stack title and stats */
             align-items: center;
-            justify-content: center; /* Center content */
+            justify-content: center;
         }
 
         .header h1 {
-            font-size: 1.4rem; /* Modern font size */
-            font-weight: 600; /* Semi-bold */
-            color: #333333;
-            letter-spacing: -0.01em;
+            font-size: 1.4rem;
+            font-weight: 700; /* Bold */
+            color: #000000;
+            letter-spacing: -0.01em; /* Tighter spacing */
             display: flex;
             align-items: center;
-            gap: 8px; /* Space between emoji and text */
+            gap: 8px;
+            margin-bottom: 0; /* No margin as stats are right below */
         }
 
         .header h1 .emoji {
             font-size: 1.2rem;
-            color: #5C6BC0; /* A soft blue/purple accent color */
+            color: #000000; /* Black emoji for monochrome */
         }
 
-        /* Stats - Re-introduced below header, subtle styling */
+        /* Stats - Subtle, monochrome, below main title */
         .stats {
             display: flex; /* Make them visible */
             justify-content: center; /* Center align stats */
             font-size: 0.8rem; /* Slightly smaller for subtle display */
             font-weight: 400;
-            color: #666666;
+            color: #666666; /* Light grey for subtle stats */
             padding: 5px 0; /* Vertical padding */
             background-color: #F8F8F8; /* Subtle background for stats bar */
             position: fixed; /* Fix below header */
@@ -81,7 +82,7 @@
             z-index: 990; /* Below header, above map */
             border-bottom: 1px solid #EAEAEA; /* Light separator */
             box-shadow: 0 1px 3px rgba(0,0,0,0.03); /* Very subtle shadow */
-            gap: 15px; /* Space between stats */
+            gap: 10px; /* Space between stats */
         }
         .stats span {
             padding: 0;
@@ -95,16 +96,16 @@
             height: 100vh;
             width: 100%;
             position: relative;
-            /* Adjusted margin-top for header + stats bar */
-            margin-top: calc(60px + 35px); /* Header (60px) + Stats (approx 35px including padding) */
-            border-radius: 20px; /* Matches app container rounding */
-            overflow: hidden; /* Ensures map content respects border-radius */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* Subtle shadow for the map area */
+            /* Header height (60px) + stats height (approx 35px) = 95px */
+            margin-top: 95px; 
+            border-radius: 4px; /* Minimal rounding */
+            overflow: hidden;
+            box-shadow: none; /* No shadow */
         }
 
         #map {
-            /* Default height for desktop/larger screens */
-            height: calc(100vh - (60px + 35px) - 90px); /* Total VH - header - stats - bottom nav */
+            /* Full height minus header (60px) - stats (35px) - bottom nav (90px) */
+            height: calc(100vh - 60px - 35px - 90px); 
             width: 100%;
         }
         
@@ -112,92 +113,92 @@
             touch-action: pan-y !important;
         }
 
-        /* Greyscale map for contrast with colorful whale markers */
+        /* Map Tiles - Grayscale to make markers pop */
         #map .leaflet-tile-pane .leaflet-tile {
             filter: grayscale(100%);
-            transition: filter 0.3s ease-in-out;
+            transition: none;
         }
 
-        /* Controls / Bottom Navigation Bar - Aligned with example app */
+        /* Controls / Bottom Navigation Bar - Notion style: Pure Black, White Text */
         .controls {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #FFFFFF;
+            background-color: #000000; /* Pure black */
             padding: 10px 0;
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 1000;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.08); /* Soft shadow from example */
-            height: 90px; /* Fixed height for bottom nav bar */
-            border-top-left-radius: 20px; /* Rounded top corners like example */
-            border-top-right-radius: 20px;
-            padding-bottom: env(safe-area-inset-bottom); /* For iPhone safe areas */
+            box-shadow: none;
+            height: 90px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
+        /* Control Buttons - Text Only */
         .control-btn {
             background-color: transparent;
             border: none;
-            color: #AAAAAA; /* Muted grey for inactive icons/text */
+            color: #FFFFFF; /* Pure white for inactive */
             padding: 8px 10px;
-            border-radius: 10px; /* Soft rounding for touch feedback */
-            font-size: 0.85rem;
+            border-radius: 4px; /* Minimal rounding */
+            font-size: 0.95rem; /* Text size */
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            transition: background-color 0.1s ease-in-out;
             box-shadow: none;
-            letter-spacing: normal; /* Normal letter spacing */
-            text-transform: none; /* No uppercase */
-            display: flex;
-            flex-direction: column;
+            letter-spacing: normal;
+            text-transform: capitalize; /* Capitalize first letter */
+            display: flex; /* Flex to center text */
             align-items: center;
-            gap: 4px;
-            flex: 1; /* Distribute space evenly */
+            justify-content: center;
+            flex: 1;
             max-width: 100px;
+            height: 100%; /* Fill button height */
         }
 
-        .control-btn .icon {
-            font-size: 1.8rem; /* Larger icon size, like example */
-            margin-bottom: 2px;
-        }
+        /* Remove .control-btn .icon styles as icons are no longer used */
+        /* .control-btn .icon { display: none; } */
 
         .control-btn:hover {
-            background-color: #F0F2F5; /* Light background on hover */
-            transform: translateY(-2px); /* Subtle lift */
+            background-color: #333333; /* Darker black on hover */
+            transform: none;
             box-shadow: none;
         }
-        .control-btn.active { /* Style for active nav item (e.g., if this button corresponds to current view) */
-            color: #5C6BC0; /* Accent color for active */
+        .control-btn.active {
+            color: #FFFFFF;
+            background-color: #333333; /* Darker background for active */
         }
         .control-btn.active .icon {
-            color: #5C6BC0;
+            color: #FFFFFF;
         }
         .control-btn.loading {
-            background-color: #E0E0E0;
+            background-color: #666666;
             cursor: not-allowed;
-            color: #AAAAAA;
+            color: #FFFFFF;
             transform: none;
             box-shadow: none;
         }
 
-        /* Species Filter - Matches example's card/list style */
+        /* Species Filter - Notion-style minimalist card */
         .species-filter {
-            background-color: #FFFFFF; /* White background */
-            padding: 1.5rem; /* Generous padding like example cards */
+            background-color: #FFFFFF;
+            padding: 24px;
             display: none;
             z-index: 999;
-            /* Recalculate max-height based on header+stats and bottom nav */
-            max-height: calc(100vh - (60px + 35px) - 90px - 20px); /* Fit between header/stats and bottom nav with margins */
+            /* Max height calculation: viewport height - header - stats - bottom nav - top/bottom margins */
+            max-height: calc(100vh - 60px - 35px - 90px - 40px); /* Adjust based on actual heights */
             overflow-y: auto;
-            border-radius: 15px; /* Rounded corners like example */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            position: absolute; /* Changed to absolute to float over map */
-            top: calc(60px + 35px + 10px); /* Below header + stats with small margin */
-            left: 20px; /* Margin from left */
-            right: 20px; /* Margin from right */
-            bottom: 100px; /* Above bottom nav with small margin */
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: calc(60px + 35px + 20px); /* Below header + stats + margin */
+            left: 20px;
+            right: 20px;
+            bottom: calc(90px + 20px); /* Above bottom nav + margin */
         }
 
         .species-filter.active {
@@ -206,104 +207,108 @@
 
         .species-list {
             display: flex;
-            flex-direction: column; /* Stack tags vertically as list items */
-            gap: 12px; /* Space between list items */
+            flex-direction: column;
+            gap: 8px;
         }
 
         .species-tag {
-            background-color: #F8F8F8; /* Light background for list items */
-            border: 1px solid #E0E0E0; /* Subtle border */
-            color: #333333;
-            padding: 0.8rem 1.2rem; /* Generous padding */
-            border-radius: 12px; /* Soft rounding */
-            font-size: 0.95rem; /* Slightly larger text */
-            font-weight: 500;
+            background-color: #FFFFFF;
+            border: 1px solid #DDDDDD;
+            color: #000000;
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 400;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03); /* Very soft shadow */
+            transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+            box-shadow: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            line-height: 1.2;
         }
-        .species-tag::after { /* Placeholder for right arrow icon */
-            content: '→'; /* Unicode arrow */
-            font-size: 1.2em;
+        .species-tag::after { /* Text-based arrow */
+            content: '›';
+            font-size: 1.5em;
             color: #AAAAAA;
             margin-left: 10px;
+            font-weight: 300;
         }
 
         .species-tag:hover {
-            background-color: #EFEFEF;
-            transform: translateY(-2px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .species-tag.active {
-            background-color: #E8F0FE; /* Very light blue for active filter */
-            border-color: #B3D9FF;
-            color: #5C6BC0; /* Matching accent blue */
-            transform: scale(1);
+            background-color: #F5F5F5;
+            border-color: #CCCCCC;
+            transform: none;
             box-shadow: none;
         }
 
-        /* Popup styling - Clean, Soft, and Rounded like example cards */
+        .species-tag.active {
+            background-color: #E0E0E0;
+            border-color: #AAAAAA;
+            color: #000000;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Popup styling - Clean, Soft, and Rounded */
         .whale-popup {
             max-width: 300px;
             font-family: 'Inter', sans-serif;
             background-color: #FFFFFF;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 20px;
             border: none;
         }
 
         .whale-popup h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #333333;
+            color: #000000;
             margin-bottom: 0.5rem;
-            text-align: center; /* Center aligned title */
+            text-align: center;
             letter-spacing: -0.01em;
+            line-height: 1.2;
         }
 
         .whale-popup p {
-            color: #555555;
+            color: #333333;
             font-size: 0.85rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             line-height: 1.4;
         }
 
         .whale-popup p strong {
             font-weight: 500;
-            color: #333333;
+            color: #000000;
         }
 
         .whale-popup .coordinates-display {
             font-family: 'Roboto Mono', monospace;
             font-size: 0.75rem;
-            color: #888888;
+            color: #666666;
             display: inline;
             white-space: nowrap;
         }
 
         .whale-popup .date, .whale-popup .recorded-by {
             font-size: 0.75rem;
-            color: #777777;
+            color: #666666;
             font-style: normal;
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
 
         .whale-popup img {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-radius: 8px;
+            border: 1px solid #EEEEEE;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            border-radius: 2px;
             width: 100%;
-            max-height: 140px;
+            max-height: 120px;
             object-fit: cover;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        /* Leaflet popup container overrides - Ensure they match popup card style */
+        /* Leaflet popup container overrides */
         .leaflet-popup-content-wrapper {
             background: transparent !important;
             padding: 0 !important;
@@ -320,7 +325,7 @@
 
         .leaflet-popup-tip {
             background-color: #FFFFFF !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* Loading Overlay - Clean and Simple */
@@ -330,13 +335,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(2px);
         }
 
         .loading-overlay.hidden {
@@ -344,9 +349,9 @@
         }
 
         .whale-spinner {
-            font-size: 3rem;
+            font-size: 2.5rem;
             animation: pulse 1.5s infinite ease-out;
-            color: #5C6BC0; /* Match primary accent color */
+            color: #000000; /* Black spinner */
         }
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
@@ -356,10 +361,10 @@
 
         .loading-text {
             font-family: 'Inter', sans-serif;
-            margin-top: 1rem;
-            font-size: 0.9rem; /* Smaller for loading */
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
-            color: #555555;
+            color: #333333;
             letter-spacing: 0.05em;
             text-transform: uppercase;
             text-align: center;
@@ -369,10 +374,10 @@
         /* Custom icon base styling for consistency */
         /* These styles make the emojis stand out over the map */
         .custom-whale-icon {
-            background-color: #5C6BC0; /* Match primary accent blue */
-            border: 3px solid #FFFFFF;
+            background-color: #000000; /* Black background for contrast */
+            border: 2px solid #FFFFFF; /* White border */
             border-radius: 50%;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -383,15 +388,113 @@
             border: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            font-size: 28px; /* Size for the emoji itself */
+            font-size: 24px; /* Smaller, more precise emoji size */
             text-align: center;
-            line-height: 1; /* For vertical alignment of emoji */
+            line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100%;
             width: 100%;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.4); /* Subtle glow for better visibility on map */
+            text-shadow: none; /* No text shadow for emojis */
+        }
+
+        /* --- Mobile Specific Overrides (Media Queries) --- */
+
+        @media (max-width: 768px) {
+            .header {
+                height: 56px; /* Slightly smaller header */
+            }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            .header h1 .emoji {
+                font-size: 1rem;
+            }
+            .stats {
+                font-size: 0.7rem;
+                height: 30px; /* Smaller stats bar */
+                top: 56px; /* Position below smaller header */
+                gap: 8px;
+            }
+            .map-container {
+                margin-top: calc(56px + 30px + 4px); /* Header + Stats + small margin below stats */
+            }
+            #map {
+                height: calc(100vh - 56px - 30px - 90px); /* Adjusted for mobile header/stats/nav heights */
+            }
+            .controls {
+                height: 80px; /* Slightly smaller bottom nav */
+                padding-top: 8px; /* Adjust padding */
+            }
+            .control-btn {
+                font-size: 0.8rem;
+                padding: 6px 8px;
+            }
+            .species-filter {
+                padding: 16px;
+                top: calc(56px + 30px + 8px); /* Position below header+stats with margin */
+                bottom: calc(90px + 16px); /* Above controls with margin */
+            }
+            .species-tag {
+                padding: 0.7rem 1rem;
+                font-size: 0.85rem;
+            }
+            .whale-popup {
+                padding: 16px;
+            }
+            .whale-popup h3 {
+                font-size: 1rem;
+            }
+            .whale-popup p {
+                font-size: 0.8rem;
+            }
+            .whale-popup .coordinates-display {
+                font-size: 0.7rem;
+            }
+            .whale-popup .date, .whale-popup .recorded-by {
+                font-size: 0.7rem;
+            }
+            .whale-popup img {
+                max-height: 100px;
+            }
+            .loading-text {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 420px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header h1 .emoji {
+                font-size: 0.9rem;
+            }
+            .stats {
+                font-size: 0.65rem;
+                height: 25px; /* Even smaller stats bar */
+                top: 52px; /* Position below even smaller header */
+                gap: 5px;
+            }
+            .map-container {
+                margin-top: calc(52px + 25px + 4px);
+            }
+            #map {
+                height: calc(100vh - 52px - 25px - 80px); /* Adjust map height */
+            }
+            .controls {
+                height: 70px; /* Even smaller bottom nav */
+            }
+            .control-btn {
+                font-size: 0.75rem;
+                padding: 5px 6px;
+            }
+            .whale-popup h3 {
+                font-size: 0.95rem;
+            }
+            .whale-popup p {
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -422,13 +525,13 @@
 
     <div class="controls">
         <button class="control-btn active" id="mapViewBtn">
-            <span class="icon">🗺️</span> Map
+            Map
         </button>
         <button class="control-btn" id="filterBtn">
-            <span class="icon">🏷️</span> Filter
+            Filter
         </button>
         <button class="control-btn" id="refreshBtn">
-            <span class="icon">🔄</span> Refresh
+            Refresh
         </button>
     </div>
 
@@ -440,7 +543,6 @@
                 this.whaleData = [];
                 this.markers = [];
                 this.activeSpecies = new Set();
-                // Removed this.userLocation as "My Location" is removed
                 
                 this.init();
             }
@@ -450,7 +552,7 @@
                 this.setupEventListeners();
                 await this.loadWhaleData();
                 this.hideLoading();
-                this.updateStats(); // Ensure stats are updated
+                this.updateStats(); 
             }
 
             initMap() {
@@ -472,9 +574,7 @@
             setupEventListeners() {
                 document.getElementById('refreshBtn').addEventListener('click', () => this.refreshData());
                 document.getElementById('filterBtn').addEventListener('click', () => this.toggleSpeciesFilter());
-                // Removed event listener for "My Location" button
-                // document.getElementById('locateBtn').addEventListener('click', () => this.locateUser());
-
+                
                 document.addEventListener('click', (e) => {
                     // Close species filter if clicking outside
                     if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
@@ -482,11 +582,21 @@
                     }
                 });
 
-                // Example of how you might activate the "Map" button in bottom nav
                 document.getElementById('mapViewBtn').addEventListener('click', () => {
-                    // Logic to ensure map view is active if you had multiple views
                     console.log('Map View Button Clicked!');
-                    // This button is active by default in the HTML for visual representation
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('mapViewBtn').classList.add('active');
+                    document.getElementById('speciesFilter').classList.remove('active');
+                });
+                
+                document.getElementById('filterBtn').addEventListener('click', () => {
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('filterBtn').classList.add('active');
+                });
+
+                 document.getElementById('refreshBtn').addEventListener('click', () => {
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('refreshBtn').classList.add('active');
                 });
             }
 
@@ -530,7 +640,7 @@
                         Math.abs(record.decimalLongitude) <= 180
                     );
 
-                    this.updateStats(); // Update stats after data load
+                    this.updateStats();
                     this.displayWhales();
                     this.createSpeciesFilter();
                     
@@ -729,10 +839,10 @@
             async refreshData() {
                 const btn = document.getElementById('refreshBtn');
                 btn.classList.add('loading');
-                btn.textContent = '🔄 Loading...';
+                btn.textContent = 'Refreshing...'; /* Changed text to "Refreshing..." */
                 
                 await this.loadWhaleData();
-                this.resetButton(btn, '🔄 Refresh');
+                this.resetButton(btn, 'Refresh'); /* Changed text to "Refresh" */
             }
 
             resetButton(btn, text) {
@@ -741,15 +851,19 @@
             }
 
             updateStats() {
-                // Update the stats display in the dedicated stats div
                 document.getElementById('sightingCount').textContent = this.whaleData.length;
                 document.getElementById('speciesCount').textContent = new Set(this.whaleData.map(w => w.scientificName)).size;
                 document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
             }
 
             hideLoading() {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }
+                    const mapTilePane = document.querySelector('#map .leaflet-tile-pane');
+                    if (mapTilePane && mapTilePane.querySelector('img')) {
+                        document.getElementById('loadingOverlay').classList.add('hidden');
+                    } else {
+                        setTimeout(() => this.hideLoading(), 200); 
+                    }
+                }
 
             showErrorMessage() {
                 const overlay = document.getElementById('loadingOverlay');
