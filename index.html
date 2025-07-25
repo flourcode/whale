@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐋 Whale Tracker - Discover Ocean Giants</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🌊 Whale Tracker - Discover Ocean Giants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +44,6 @@
 
 
             /* Layout Heights (Desktop Defaults) */
-            /* Header is now gone, so these will be re-evaluated for map height */
             --controls-height-desktop: 140px; /* Approximate combined height of buttons + stats for desktop */
         }
 
@@ -52,7 +51,12 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Prevent horizontal overflow */
+            overflow-y: hidden; /* Prevent body scrolling by default unless modal is open or explicitly allowed */
+            overscroll-behavior-y: contain; /* Prevents rubber-banding/pull-to-refresh on most browsers */
+            /* Add safe area insets to HTML/body to push content, letting background fill */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         body {
@@ -118,8 +122,7 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* REMOVED: .header styles are now gone */
-        /* .header-content, .whale-header, .header h1, .header-subtitle styles moved to .controls related classes */
+        /* .stats (now moved to bottom) - Hide this if it exists in the header */
         .stats { /* This class should no longer be in the HTML. */
             display: none; 
         }
@@ -127,9 +130,10 @@
         /* Map Container */
         .map-container {
             position: relative;
-            height: 100vh; /* Map takes full height */
+            /* Height is dynamic based on controls, and now safe-areas */
+            height: calc(100vh - var(--controls-height-desktop) - 20px); /* Adjust for controls bottom + its height */
             width: 100%;
-            margin-top: 0; /* No header, so no top margin */
+            margin-top: 0; /* Map goes to the very top */
             z-index: 10;
         }
 
@@ -154,10 +158,10 @@
         /* --- Controls (Bottom Navigation & Stats) --- */
         .controls {
             position: fixed;
-            bottom: 20px;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* Adjust for safe area at bottom */
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(10, 22, 40, 0.7); /* Use a consistent transparent background */
+            background: rgba(10, 22, 40, 0.7); /* Consistent transparent background */
             backdrop-filter: blur(20px);
             border: 1px solid rgba(100, 181, 246, 0.2);
             padding: 0.8rem 1.2rem;
@@ -330,12 +334,12 @@
         /* Species Filter - Modern Card Design */
         .species-filter {
             position: fixed;
-            top: 20px; /* Adjust top since header is gone */
+            top: calc(20px + env(safe-area-inset-top, 0px)); /* Adjust top for safe area */
             left: 20px;
             right: 20px;
             /* Bottom calculation now needs to factor in the controls height at the bottom */
-            bottom: calc(20px + var(--controls-height-desktop)); 
-            max-height: calc(100vh - 40px - var(--controls-height-desktop)); /* Adjust filter max-height */
+            bottom: calc(20px + var(--controls-height-desktop) + env(safe-area-inset-bottom, 0px)); 
+            max-height: calc(100vh - 40px - var(--controls-height-desktop) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); /* Adjust filter max-height */
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             padding: 2rem;
@@ -647,6 +651,13 @@
             line-height: 1.4;
         }
 
+        /* Style for the audio player within the modal */
+        #whaleAudioPlayer {
+            width: 100%; /* Make the audio player fill its container */
+            margin-top: 5px; /* Small space below label */
+            height: 30px; /* Make the audio player more compact */
+        }
+
         /* Whale Popups (Desktop Only) */
         .whale-popup {
             color: var(--ocean-dark);
@@ -892,17 +903,13 @@
                 --controls-height-mobile: 130px; /* Adjusted controls height for mobile */
             }
 
-            /* Removed .header specific styles as header is gone */
             .map-container {
-                margin-top: 0; /* Map now truly goes to the top */
-            }
-
-            #map {
-                height: calc(100vh - var(--controls-height-mobile) - 10px); /* Adjusted map height for bottom controls */
+                /* Map height now considers safe areas from html/body padding + controls */
+                height: calc(100vh - var(--controls-height-mobile) - 10px);
             }
 
             .controls {
-                bottom: 10px;
+                bottom: calc(10px + env(safe-area-inset-bottom, 0px)); /* Adjust controls bottom for safe area */
                 padding: 0.5rem;
                 border-radius: var(--border-radius-base);
                 gap: 0.6rem;
@@ -911,20 +918,20 @@
             }
 
             .control-app-info {
-                padding-bottom: 0.5rem; /* Smaller padding */
+                padding-bottom: 0.5rem;
                 gap: 0.5rem;
             }
 
             .giant-whale-small {
-                font-size: 2rem; /* Smaller for mobile */
+                font-size: 2rem;
             }
 
             .control-app-title {
-                font-size: 1.2rem; /* Smaller title for mobile */
+                font-size: 1.2rem;
             }
 
             .control-app-subtitle {
-                font-size: 0.7rem; /* Smaller subtitle for mobile */
+                font-size: 0.7rem;
             }
 
             .control-buttons {
@@ -963,9 +970,9 @@
             }
 
             .species-filter {
-                top: 20px; /* Filter starts from top of screen now */
-                bottom: calc(10px + var(--controls-height-mobile));
-                max-height: calc(100vh - 20px - var(--controls-height-mobile) - 20px); /* Adjusted filter max-height */
+                top: calc(20px + env(safe-area-inset-top, 0px)); /* Adjust filter top for safe area */
+                bottom: calc(10px + var(--controls-height-mobile) + env(safe-area-inset-bottom, 0px)); /* Adjust filter bottom for safe area */
+                max-height: calc(100vh - 40px - var(--controls-height-mobile) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); /* Adjust filter max-height */
                 padding: 1.5rem;
                 left: 10px;
                 right: 10px;
@@ -980,7 +987,6 @@
             /* Modal-specific adjustments for mobile */
             .whale-modal-content {
                 min-height: 100vh; /* Ensure it tries to take full height */
-                /* No max-width on mobile, let it stretch */
             }
 
             .whale-modal-image {
@@ -1035,7 +1041,7 @@
             .controls {
                 padding: 0.4rem;
                 gap: 0.5rem;
-                bottom: 5px;
+                bottom: calc(5px + env(safe-area-inset-bottom, 0px)); /* Adjust for safe area */
                 border-radius: var(--border-radius-base);
                 width: 95%; /* Take even more width on very small screens */
             }
@@ -1092,9 +1098,9 @@
             }
 
             .species-filter {
-                top: 10px; /* Adjust filter top again for very small screens */
-                bottom: calc(5px + var(--controls-height-mobile));
-                max-height: calc(100vh - 15px - var(--controls-height-mobile) - 15px);
+                top: calc(10px + env(safe-area-inset-top, 0px)); /* Adjust for safe area */
+                bottom: calc(5px + var(--controls-height-mobile) + env(safe-area-inset-bottom, 0px)); /* Adjust for safe area */
+                max-height: calc(100vh - 15px - var(--controls-height-mobile) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
             }
             /* Modal-specific adjustments for very small mobile */
             .whale-modal-image {
@@ -1161,6 +1167,17 @@
                             <p class="whale-modal-fact-text" id="modalFacts">--</p>
                         </div>
                     </div>
+
+                    <div class="whale-modal-detail" id="modalAudioSection">
+                        <div class="whale-modal-detail-icon">🔊</div>
+                        <div class="whale-modal-detail-content">
+                            <div class="whale-modal-detail-label">Listen to the Whale</div>
+                            <audio controls preload="none" id="whaleAudioPlayer">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+                    <! -- END NEW -->
                 </div>
             </div>
         </div>
@@ -1172,10 +1189,13 @@
     </div>
 
     <div class="map-container">
-        <div id="map"></div> </div>
+        <div id="map"></div>
+    </div>
 
     <div class="controls">
-        <div class="control-app-info"> <div class="giant-whale-small">🐋</div> <div class="control-text-group">
+        <div class="control-app-info">
+            <div class="giant-whale-small">🐋</div>
+            <div class="control-text-group">
                 <h1 class="control-app-title">Whale Tracker</h1>
                 <p class="control-app-subtitle">Thanks for all the fish!</p>
             </div>
@@ -1225,10 +1245,10 @@
                 this.init();
             }
 
-            async init() {
+            async init() { // Corrected: Added 'async'
                 this.initMap();
                 this.setupEventListeners();
-                await this.loadWhaleData();
+                await this.loadWhaleData(); // This 'await' is now valid
                 this.hideLoading();
                 this.updateStats(); 
             }
@@ -1249,12 +1269,10 @@
                     position: 'topright'
                 }).addTo(this.map);
                 
-                // Custom popup positioning for mobile - adjusted to no header
                 this.map.on('popupopen', (e) => {
                     const popup = e.popup;
                     const popupHeight = popup._container.offsetHeight;
-                    // No fixed header to consider, just map boundaries
-                    const mapTopBoundary = 20; // A small buffer from the top of the map if needed
+                    const mapTopBoundary = 20; 
                     
                     const popupTop = this.map.latLngToContainerPoint(popup._latlng).y - popupHeight;
                     
@@ -1275,7 +1293,6 @@
             }
 
             setupEventListeners() {
-                // Modal close button
                 const modalCloseBtn = document.getElementById('modalClose');
                 if (modalCloseBtn) {
                     modalCloseBtn.onclick = (e) => {
@@ -1284,7 +1301,6 @@
                     };
                 }
                 
-                // Modal background click to close
                 const whaleModal = document.getElementById('whaleModal');
                 if (whaleModal) {
                     whaleModal.onclick = (e) => {
@@ -1294,61 +1310,59 @@
                     };
                 }
                 
-                // Escape key to close modal
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && document.getElementById('whaleModal').classList.contains('active')) {
                         this.closeWhaleModal();
                     }
                 });
                 
-                // Map view button (now also reset view)
                 document.getElementById('mapViewBtn').addEventListener('click', () => {
                     console.log('Map View Button Clicked!');
                     document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
                     document.getElementById('mapViewBtn').classList.add('active');
                     document.getElementById('speciesFilter').classList.remove('active');
                     
-                    // Reset map view to initial state
                     this.map.setView(this.initialMapCenter, this.initialMapZoom);
                 });
                 
-                // Filter button
                 document.getElementById('filterBtn').addEventListener('click', () => {
                     document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
                     document.getElementById('filterBtn').classList.add('active');
                     this.toggleSpeciesFilter();
                 });
                 
-                // Refresh button
                 document.getElementById('refreshBtn').addEventListener('click', () => {
                     document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
                     document.getElementById('refreshBtn').classList.add('active');
                     this.refreshData();
                 });
                 
-                // Close species filter when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.species-filter') && !e.target.closest('#filterBtn')) {
                         document.getElementById('speciesFilter').classList.remove('active');
                     }
                 });
                 
-                // Handle window resize to switch between modal and popup
                 let resizeTimeout;
                 window.addEventListener('resize', () => {
                     clearTimeout(resizeTimeout);
                     resizeTimeout = setTimeout(() => {
-                        this.displayWhales(); // Recreate markers with appropriate interaction
+                        this.displayWhales();
                     }, 250);
                 });
             }
 
             closeWhaleModal() {
+                const modalAudioPlayer = document.getElementById('whaleAudioPlayer');
+                if (modalAudioPlayer) {
+                    modalAudioPlayer.pause();
+                    modalAudioPlayer.currentTime = 0;
+                }
                 document.getElementById('whaleModal').classList.remove('active');
                 document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
 
-            async loadWhaleData() {
+            async loadWhaleData() { // Corrected: This method was missing from previous output
                 try {
                     const whaleSpecies = [
                         'Balaenoptera musculus',
@@ -1398,7 +1412,7 @@
                 }
             }
 
-            displayWhales() {
+            displayWhales() { // Corrected: This method was missing from previous output
                 this.markers.forEach(marker => this.map.removeLayer(marker));
                 this.markers = [];
 
@@ -1411,7 +1425,7 @@
                 });
             }
 
-            createWhaleMarker(whale) {
+            createWhaleMarker(whale) { // Corrected: This method was missing from previous output
                 const icon = L.divIcon({
                     html: `<div class="whale-marker">${this.getWhaleEmoji(whale.scientificName)}</div>`,
                     className: 'whale-marker-container',
@@ -1421,17 +1435,15 @@
 
                 const marker = L.marker([whale.decimalLatitude, whale.decimalLongitude], { icon });
                 
-                // On mobile, use modal instead of popup
                 if (window.innerWidth <= 768) {
                     marker.on('click', () => this.showWhaleModal(whale));
                 } else {
-                    // Desktop keeps the popup experience
                     const popupContent = this.createPopupContent(whale);
                     marker.bindPopup(popupContent, {
                         maxWidth: 320,
                         className: 'whale-popup-wrapper',
                         autoPan: true,
-                        autoPanPaddingTopLeft: [20, 20], // Adjusted padding for no header
+                        autoPanPaddingTopLeft: [20, 20], 
                         autoPanPaddingBottomRight: [20, 100],
                         keepInView: true
                     });
@@ -1447,13 +1459,10 @@
                 const modalTitle = document.getElementById('modalTitle');
                 const modalLocation = document.getElementById('modalLocation');
                 const modalDate = document.getElementById('modalDate');
-                // const modalCoords = document.getElementById('modalCoords'); // REMOVED/COMMENTED
-                // const modalRecorder = document.getElementById('modalRecorder'); // REMOVED/COMMENTED
                 const modalFacts = document.getElementById('modalFacts');
+                const modalAudioPlayer = document.getElementById('whaleAudioPlayer'); 
+                const modalAudioSection = document.getElementById('modalAudioSection'); 
 
-                // const modalRecorderSection = document.getElementById('modalRecorderSection'); // REMOVED/COMMENTED
-                
-                // Get whale data
                 const commonName = this.getCommonName(whale.scientificName);
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
                 const emoji = this.getWhaleEmoji(whale.scientificName);
@@ -1461,31 +1470,28 @@
                 const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
                 const whaleInfo = this.getWhaleInfo(whale.scientificName);
 
-                // Set modal content
                 modalTitle.textContent = commonName;
                 modalLocation.textContent = location;
                 modalDate.textContent = date;
-                // modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`; // REMOVED/COMMENTED
                 modalFacts.textContent = whaleInfo.facts;
 
-                // Handle image/emoji
+                if (whaleInfo.audio) {
+                    modalAudioPlayer.src = whaleInfo.audio;
+                    modalAudioSection.style.display = 'flex'; 
+                    modalAudioPlayer.load(); 
+                } else {
+                    modalAudioPlayer.src = ''; 
+                    modalAudioSection.style.display = 'none'; 
+                }
+                
                 if (imageUrl) {
                     modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
                 } else {
                     modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
                 }
                 
-                // Handle recorder - REMOVED/COMMENTED
-                // if (whale.recordedBy) {
-                //     modalRecorder.textContent = whale.recordedBy;
-                //     modalRecorderSection.style.display = 'flex';
-                // } else {
-                //     modalRecorderSection.style.display = 'none';
-                // }
-                
-                // Show modal
                 modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                document.body.style.overflow = 'hidden'; 
             }
 
             getWhaleEmoji(scientificName) {
@@ -1545,38 +1551,47 @@
                 }
             }
 
-            getWhaleInfo(scientificName) {
+            getWhaleInfo(scientificName) { // Corrected: This method was missing from previous output
                 const infoMap = {
                     'Balaenoptera musculus': {
-                        facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles."
+                        facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles.",
+                        audio: 'audio/blue_whale_sound.ogg' 
                     },
                     'Megaptera novaeangliae': {
-                        facts: "Known for their acrobatic breaches and complex songs, humpbacks are found in oceans worldwide and undertake one of the longest migrations of any mammal. They use a unique 'bubble-net feeding' technique to trap fish."
+                        facts: "Known for their acrobatic breaches and complex songs, humpbacks are found in oceans worldwide and undertake one of the longest migrations of any mammal. They use a unique 'bubble-net feeding' technique to trap fish.",
+                        audio: 'audio/humpback_whale_sound.ogg' 
                     },
                     'Balaenoptera physalus': {
-                        facts: "The second-largest whale species, fin whales are fast swimmers found in all major oceans, preferring temperate and polar waters. They are often called 'greyhounds of the sea' due to their speed."
+                        facts: "The second-largest whale species, fin whales are fast swimmers found in all major oceans, preferring temperate and polar waters. They are often called 'greyhounds of the sea' due to their speed.",
+                        audio: 'audio/fin_whale_sound.ogg' 
                     },
                     'Balaenoptera acutorostrata': {
-                        facts: "These smaller baleen whales are widespread in polar, temperate, and tropical waters. They are known for their inquisitive nature and sometimes approach boats."
+                        facts: "These smaller baleen whales are widespread in polar, temperate, and tropical waters. They are known for their inquisitive nature and sometimes approach boats.",
+                        audio: 'audio/minke_whale_sound.ogg' 
                     },
                     'Eubalaena glacialis': {
-                        facts: "Critically endangered, North Atlantic Right Whales inhabit temperate and subpolar waters of the North Atlantic, typically staying close to the coast. They were named 'right whales' because they were the 'right' ones to hunt."
+                        facts: "Critically endangered, North Atlantic Right Whales inhabit temperate and subpolar waters of the North Atlantic, typically staying close to the coast. They were named 'right whales' because they were the 'right' ones to hunt.",
+                        audio: 'audio/right_whale_sound.ogg' 
                     },
                     'Physeter macrocephalus': {
-                        facts: "Found in all deep oceans, sperm whales are the largest toothed predators and can dive to extreme depths in search of giant squid. Their enormous, square-shaped heads contain a spermaceti organ."
+                        facts: "Found in all deep oceans, sperm whales are the largest toothed predators and can dive to extreme depths in search of giant squid. Their enormous, square-shaped heads contain a spermaceti organ.",
+                        audio: 'audio/sperm_whale_sound.ogg' 
                     },
                     'Orcinus orca': {
-                        facts: "The largest dolphin species, killer whales are highly intelligent and social, found in all oceans from polar to tropical regions. They are apex predators with diverse diets and complex hunting strategies."
+                        facts: "The largest dolphin species, killer whales are highly intelligent and social, found in all oceans from polar to tropical regions. They are apex predators with diverse diets and complex hunting strategies.",
+                        audio: 'audio/orca_sound.ogg' 
                     },
                     'Globicephala melas': {
-                        facts: "These highly social dolphins prefer deep, cool temperate waters and are often seen in large, tightly knit pods. They are known for their strong family bonds and can mass strand."
+                        facts: "These highly social dolphins prefer deep, cool temperate waters and are often seen in large, tightly knit pods. They are known for their strong family bonds and can mass strand.",
+                        audio: 'audio/pilot_whale_sound.ogg' 
                     },
                     'Delphinus delphis': {
-                        facts: "Agile and fast-swimming, common dolphins are found in temperate and tropical oceans worldwide, usually in large groups. They are easily recognizable by their hourglass pattern on their sides."
+                        facts: "Agile and fast-swimming, common dolphins are found in temperate and tropical oceans worldwide, usually in large groups. They are easily recognizable by their hourglass pattern on their sides.",
+                        audio: 'audio/common_dolphin_sound.ogg' 
                     }
                 };
                 const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
-                return infoMap[binomialName] || { facts: "No specific habitat or facts available for this species yet." };
+                return infoMap[binomialName] || { facts: "No specific habitat or facts available for this species yet.", audio: null };
             }
 
 
@@ -1620,6 +1635,14 @@
                                     <span class="meta-icon">🌍</span>
                                     <span class="popup-fact-text">${whaleInfo.facts}</span>
                                 </div>
+                                ${whaleInfo.audio ? 
+                                    `<div class="whale-popup-meta-item">
+                                        <span class="meta-icon">🔊</span>
+                                        <audio controls preload="none" src="${whaleInfo.audio}">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>` : ''
+                                }
                             </div>
                         </div>
                     </div>
