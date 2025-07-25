@@ -664,7 +664,7 @@
 
     .whale-modal-detail {
         display: flex;
-        align-items: center;
+        align-items: flex-start; /* Align icon and text at the top */
         gap: 1rem;
         padding: 1rem;
         background: var(--foam-white);
@@ -681,6 +681,7 @@
         font-size: 1.5rem;
         width: 40px;
         height: 40px;
+        flex-shrink: 0; /* Prevent shrinking */
         background: white;
         border-radius: 50%;
         display: flex;
@@ -697,6 +698,7 @@
         font-size: 0.85rem;
         color: rgba(10, 22, 40, 0.6);
         font-weight: 500;
+        margin-bottom: 0.2rem; /* Spacing between label and value/text */
     }
 
     .whale-modal-detail-value {
@@ -708,6 +710,12 @@
     .whale-modal-coordinates {
         font-family: 'Space Grotesk', monospace;
         color: var(--ocean-light);
+    }
+
+    .whale-modal-fact-text, .popup-fact-text {
+        font-size: 0.85rem; /* xs font size */
+        color: var(--ocean-dark);
+        line-height: 1.4;
     }
 
     /* Whale Popups (Desktop Only) */
@@ -802,7 +810,7 @@
 
     .whale-popup-meta-item {
         display: flex;
-        align-items: center;
+        align-items: flex-start; /* Align icon and text at the top */
         gap: 8px;
         font-size: 0.85rem;
         color: rgba(10, 22, 40, 0.6);
@@ -811,6 +819,7 @@
     .whale-popup-meta-item .meta-icon {
         font-size: 1rem;
         color: var(--ocean-accent);
+        flex-shrink: 0; /* Prevent shrinking */
     }
 
     .coordinates-display {
@@ -1175,6 +1184,16 @@
                             <div class="whale-modal-detail-value" id="modalRecorder">--</div>
                         </div>
                     </div>
+
+                    <div class="whale-modal-detail">
+                        <div class="whale-modal-detail-icon">🌍</div>
+                        <div class="whale-modal-detail-content">
+                            <div class="whale-modal-detail-label">Habitat & Facts</div>
+                            <p class="whale-modal-fact-text" id="modalFacts">--</p>
+                        </div>
+                    </div>
+                    <! -- END NEW -->
+
                 </div>
             </div>
         </div>
@@ -1183,8 +1202,9 @@
     <header class="header">
         <div class="header-content">
             <div class="whale-header">
-                               <div class="header-text-group">
-                    <h1>Whaloha.</h1>
+                <div class="giant-whale">🐋</div>
+                <div class="header-text-group">
+                    <h1>Whale Tracker</h1>
                     <p class="header-subtitle">Thanks for all the fish!</p>
                 </div>
             </div>
@@ -1474,20 +1494,23 @@
                 const modalCoords = document.getElementById('modalCoords');
                 const modalRecorder = document.getElementById('modalRecorder');
                 const modalRecorderSection = document.getElementById('modalRecorderSection');
-                
+                const modalFacts = document.getElementById('modalFacts'); // New element
+
                 // Get whale data
                 const commonName = this.getCommonName(whale.scientificName);
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
                 const emoji = this.getWhaleEmoji(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-                
+                const whaleInfo = this.getWhaleInfo(whale.scientificName); // Get new info
+
                 // Set modal content
                 modalTitle.textContent = commonName;
                 modalLocation.textContent = location;
                 modalDate.textContent = date;
                 modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`;
-                
+                modalFacts.textContent = whaleInfo.facts; // Set new info
+
                 // Handle image/emoji
                 if (imageUrl) {
                     modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
@@ -1567,11 +1590,47 @@
                 }
             }
 
+            getWhaleInfo(scientificName) {
+                const infoMap = {
+                    'Balaenoptera musculus': {
+                        facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles."
+                    },
+                    'Megaptera novaeangliae': {
+                        facts: "Known for their acrobatic breaches and complex songs, humpbacks are found in oceans worldwide and undertake one of the longest migrations of any mammal. They use a unique 'bubble-net feeding' technique to trap fish."
+                    },
+                    'Balaenoptera physalus': {
+                        facts: "The second-largest whale species, fin whales are fast swimmers found in all major oceans, preferring temperate and polar waters. They are often called 'greyhounds of the sea' due to their speed."
+                    },
+                    'Balaenoptera acutorostrata': {
+                        facts: "These smaller baleen whales are widespread in polar, temperate, and tropical waters. They are known for their inquisitive nature and sometimes approach boats."
+                    },
+                    'Eubalaena glacialis': {
+                        facts: "Critically endangered, North Atlantic Right Whales inhabit temperate and subpolar waters of the North Atlantic, typically staying close to the coast. They were named 'right whales' because they were the 'right' ones to hunt."
+                    },
+                    'Physeter macrocephalus': {
+                        facts: "Found in all deep oceans, sperm whales are the largest toothed predators and can dive to extreme depths in search of giant squid. Their enormous, square-shaped heads contain a spermaceti organ."
+                    },
+                    'Orcinus orca': {
+                        facts: "The largest dolphin species, killer whales are highly intelligent and social, found in all oceans from polar to tropical regions. They are apex predators with diverse diets and complex hunting strategies."
+                    },
+                    'Globicephala melas': {
+                        facts: "These highly social dolphins prefer deep, cool temperate waters and are often seen in large, tightly knit pods. They are known for their strong family bonds and can mass strand."
+                    },
+                    'Delphinus delphis': {
+                        facts: "Agile and fast-swimming, common dolphins are found in temperate and tropical oceans worldwide, usually in large groups. They are easily recognizable by their hourglass pattern on their sides."
+                    }
+                };
+                const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
+                return infoMap[binomialName] || { facts: "No specific habitat or facts available for this species yet." };
+            }
+
+
             createPopupContent(whale) {
                 const commonName = this.getCommonName(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
                 const emoji = this.getWhaleEmoji(whale.scientificName);
+                const whaleInfo = this.getWhaleInfo(whale.scientificName); // Get new info
                 
                 const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
 
@@ -1602,6 +1661,10 @@
                                         <span>${whale.recordedBy}</span>
                                     </div>` : ''
                                 }
+                                <div class="whale-popup-meta-item">
+                                    <span class="meta-icon">🌍</span>
+                                    <span class="popup-fact-text">${whaleInfo.facts}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
