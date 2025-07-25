@@ -43,7 +43,7 @@
 
 
         /* Layout Heights (Desktop Defaults) */
-        --header-height: 80px; /* Approximate height of your header */
+        /* Header is now gone, so these will be re-evaluated for map height */
         --controls-height-desktop: 140px; /* Approximate combined height of buttons + stats for desktop */
     }
 
@@ -117,143 +117,23 @@
         100% { transform: translateX(-50%); }
     }
 
-    /* Header - Cleaner design with stats moved */
-    .header {
-        background: rgba(10, 22, 40, 0.7); /* Slightly more transparent */
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(100, 181, 246, 0.2);
-        padding: 0.8rem 1rem;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        height: var(--header-height);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom-left-radius: var(--border-radius-base); /* Cohesive radius */
-        border-bottom-right-radius: var(--border-radius-base); /* Cohesive radius */
-    }
-
-    .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        position: relative;
-        flex: 1;
-    }
-
-    .whale-header {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-    }
-
-    .header-text-group {
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Center text group */
-    }
-
-    .giant-whale {
-        font-size: 3rem;
-        filter: drop-shadow(0 8px 20px rgba(100, 181, 246, 0.4));
-        animation: bob 4s ease-in-out infinite;
-        position: relative;
-        z-index: 2;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .giant-whale:hover {
-        transform: scale(1.1) rotate(10deg);
-    }
-
-    @keyframes bob {
-        0% { 
-            transform: translateY(0) translateX(0) rotate(0deg);
-        }
-        25% { 
-            transform: translateY(-8px) translateX(5px) rotate(-5deg);
-        }
-        50% { 
-            transform: translateY(0) translateX(10px) rotate(0deg);
-        }
-        75% { 
-            transform: translateY(-5px) translateX(5px) rotate(5deg);
-        }
-        100% { 
-            transform: translateY(0) translateX(0) rotate(0deg);
-        }
-    }
-
-    .header h1 {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: var(--pure-white);
-        margin: 0;
-        letter-spacing: -0.02em;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        text-align: center; /* Ensure title is centered */
-    }
-
-    .header-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 400;
-        color: rgba(255, 255, 255, 0.7);
-        margin-top: 0.2rem;
-        text-align: center; /* Ensure subtitle is centered */
-    }
-
-    /* Water ripple effect behind whale */
-    .giant-whale::before {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 10px;
-        background: radial-gradient(ellipse, rgba(100, 181, 246, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: ripple 4s ease-in-out infinite;
-    }
-
-    @keyframes ripple {
-        0%, 100% { 
-            transform: translateX(-50%) scaleX(0.5);
-            opacity: 0;
-        }
-        50% { 
-            transform: translateX(-50%) scaleX(1.5);
-            opacity: 1;
-        }
-    }
-
-    /* .stats (now moved to bottom) - Hide this if it exists in the header */
-    .stats {
+    /* REMOVED: .header styles are now gone */
+    /* .header-content, .whale-header, .header h1, .header-subtitle styles moved to .controls related classes */
+    .stats { /* This class should no longer be in the HTML. */
         display: none; 
     }
 
     /* Map Container */
     .map-container {
         position: relative;
-        height: 100%;
+        height: 100vh; /* Map takes full height */
         width: 100%;
-        margin-top: var(--header-height);
+        margin-top: 0; /* No header, so no top margin */
         z-index: 10;
     }
 
     #map {
-        height: calc(100vh - var(--header-height) - var(--controls-height-desktop));
+        height: 100%; /* Map takes full height of its container */
         width: 100%;
         position: relative;
         z-index: 10;
@@ -276,21 +156,65 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(10, 22, 40, 0.7); /* Use a consistent transparent background */
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(100, 181, 246, 0.2);
         padding: 0.8rem 1.2rem;
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 0.8rem; /* Increased gap for better separation */
         z-index: 1000;
         border-radius: var(--border-radius-base); /* Cohesive radius */
         box-shadow: var(--shadow-xl);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: fit-content;
-        min-width: 300px;
-        align-items: center; /* Center content within the controls */
+        width: 90%; /* Let it take more width */
+        max-width: 550px; /* Set a max-width for larger screens */
+        align-items: center;
     }
+
+    .control-app-info { /* Styling for the moved app title and subtitle */
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        width: 100%;
+        justify-content: center;
+        padding-bottom: 0.6rem; /* Space before buttons */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Separator */
+    }
+
+    .giant-whale-small { /* A smaller whale icon for the bottom bar */
+        font-size: 2.2rem; /* Adjusted size */
+        filter: drop-shadow(0 4px 10px rgba(100, 181, 246, 0.4));
+        animation: bob 4s ease-in-out infinite; /* Keep animation */
+    }
+
+    .control-text-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .control-app-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.4rem; /* Adjusted title size for bottom */
+        font-weight: 700;
+        color: var(--pure-white);
+        margin: 0;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    .control-app-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem; /* Adjusted subtitle size */
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.1rem;
+        text-align: center;
+    }
+
 
     .control-buttons {
         display: flex;
@@ -304,7 +228,7 @@
         border: none;
         color: rgba(255, 255, 255, 0.7);
         padding: 0.8rem 1.5rem;
-        border-radius: var(--border-radius-pill); /* Cohesive radius for buttons */
+        border-radius: var(--border-radius-pill);
         font-size: 0.9rem;
         font-weight: 500;
         cursor: pointer;
@@ -314,6 +238,9 @@
         align-items: center;
         gap: 8px;
         flex-shrink: 0;
+        flex-grow: 1; /* Allow buttons to grow evenly */
+        text-align: center; /* Center text within buttons */
+        justify-content: center; /* Center icon and text within buttons */
     }
 
     .control-btn::before {
@@ -324,10 +251,10 @@
         right: 0;
         bottom: 0;
         background: linear-gradient(135deg, var(--ocean-light) 0%, var(--ocean-accent) 100%);
-        border-radius: var(--border-radius-pill); /* Cohesive radius */
+        border-radius: var(--border-radius-pill);
         opacity: 0;
         transition: opacity 0.3s ease;
-        z-index: -1; /* Place behind text */
+        z-index: -1;
     }
 
     .control-btn:hover {
@@ -376,7 +303,7 @@
         background: rgba(100, 181, 246, 0.1);
         border: 1px solid rgba(100, 181, 246, 0.25);
         padding: 0.3rem 0.7rem;
-        border-radius: var(--border-radius-sm-pill); /* Cohesive radius for stat pills */
+        border-radius: var(--border-radius-sm-pill);
         font-size: 0.7rem;
         font-weight: 500;
         display: flex;
@@ -402,17 +329,18 @@
     /* Species Filter - Modern Card Design */
     .species-filter {
         position: fixed;
-        top: calc(var(--header-height) + 20px);
+        top: 20px; /* Adjust top since header is gone */
         left: 20px;
         right: 20px;
-        bottom: calc(20px + var(--controls-height-desktop));
-        max-height: calc(100vh - var(--header-height) - var(--controls-height-desktop) - 60px);
+        /* Bottom calculation now needs to factor in the controls height at the bottom */
+        bottom: calc(20px + var(--controls-height-desktop)); 
+        max-height: calc(100vh - 40px - var(--controls-height-desktop)); /* Adjust filter max-height */
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
         padding: 2rem;
         display: none;
         z-index: 999;
-        border-radius: var(--border-radius-base); /* Cohesive radius */
+        border-radius: var(--border-radius-base);
         box-shadow: var(--shadow-xl);
         overflow-y: auto;
         animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -452,7 +380,7 @@
         border: 2px solid transparent;
         color: var(--ocean-dark);
         padding: 1.2rem;
-        border-radius: 16px; /* A unique radius for these cards, or can use a variable */
+        border-radius: 16px;
         font-size: 0.95rem;
         font-weight: 500;
         cursor: pointer;
@@ -664,7 +592,7 @@
 
     .whale-modal-detail {
         display: flex;
-        align-items: flex-start; /* Align icon and text at the top */
+        align-items: flex-start;
         gap: 1rem;
         padding: 1rem;
         background: var(--foam-white);
@@ -681,7 +609,7 @@
         font-size: 1.5rem;
         width: 40px;
         height: 40px;
-        flex-shrink: 0; /* Prevent shrinking */
+        flex-shrink: 0;
         background: white;
         border-radius: 50%;
         display: flex;
@@ -698,7 +626,7 @@
         font-size: 0.85rem;
         color: rgba(10, 22, 40, 0.6);
         font-weight: 500;
-        margin-bottom: 0.2rem; /* Spacing between label and value/text */
+        margin-bottom: 0.2rem;
     }
 
     .whale-modal-detail-value {
@@ -713,7 +641,7 @@
     }
 
     .whale-modal-fact-text, .popup-fact-text {
-        font-size: 0.85rem; /* xs font size */
+        font-size: 0.85rem;
         color: var(--ocean-dark);
         line-height: 1.4;
     }
@@ -810,7 +738,7 @@
 
     .whale-popup-meta-item {
         display: flex;
-        align-items: flex-start; /* Align icon and text at the top */
+        align-items: flex-start;
         gap: 8px;
         font-size: 0.85rem;
         color: rgba(10, 22, 40, 0.6);
@@ -819,7 +747,7 @@
     .whale-popup-meta-item .meta-icon {
         font-size: 1rem;
         color: var(--ocean-accent);
-        flex-shrink: 0; /* Prevent shrinking */
+        flex-shrink: 0;
     }
 
     .coordinates-display {
@@ -936,7 +864,7 @@
         .whale-modal-content {
             max-width: 600px;
             margin: 2rem auto;
-            border-radius: var(--border-radius-base); /* Cohesive radius */
+            border-radius: var(--border-radius-base);
             overflow: hidden;
             min-height: auto;
             box-shadow: var(--shadow-xl);
@@ -944,7 +872,7 @@
 
         .whale-modal-image {
             height: 300px;
-            border-radius: var(--border-radius-base) var(--border-radius-base) 0 0; /* Top cohesive radius */
+            border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
         }
 
         .modal-close {
@@ -960,41 +888,42 @@
     /* Mobile adjustments (up to 768px) */
     @media (max-width: 768px) {
         :root {
-            --header-height: 95px; /* Adjusted height for subtitle */
-            --controls-height-mobile: 130px; /* Adjusted combined controls height on mobile */
+            --controls-height-mobile: 130px; /* Adjusted controls height for mobile */
         }
 
-        .header {
-            padding: 0.6rem 0.8rem;
-            height: var(--header-height);
-            border-bottom-left-radius: var(--border-radius-base);
-            border-bottom-right-radius: var(--border-radius-base);
-            background: rgba(10, 22, 40, 0.4); /* More transparent background for mobile */
-        }
-
-        .header h1 {
-            font-size: 1.4rem;
-        }
-
-        .giant-whale {
-            font-size: 2.5rem;
-        }
-
+        /* Removed .header specific styles as header is gone */
         .map-container {
-            margin-top: var(--header-height);
+            margin-top: 0; /* Map now truly goes to the top */
         }
 
         #map {
-            height: calc(100vh - var(--header-height) - var(--controls-height-mobile) - 10px); /* Adjusted map height */
+            height: calc(100vh - var(--controls-height-mobile) - 10px); /* Adjusted map height for bottom controls */
         }
 
         .controls {
             bottom: 10px;
             padding: 0.5rem;
-            border-radius: var(--border-radius-base); /* Cohesive radius */
+            border-radius: var(--border-radius-base);
             gap: 0.6rem;
             width: 90%;
             max-width: 400px;
+        }
+
+        .control-app-info {
+            padding-bottom: 0.5rem; /* Smaller padding */
+            gap: 0.5rem;
+        }
+
+        .giant-whale-small {
+            font-size: 2rem; /* Smaller for mobile */
+        }
+
+        .control-app-title {
+            font-size: 1.2rem; /* Smaller title for mobile */
+        }
+
+        .control-app-subtitle {
+            font-size: 0.7rem; /* Smaller subtitle for mobile */
         }
 
         .control-buttons {
@@ -1008,7 +937,7 @@
             font-size: 0.85rem;
             flex: 1;
             min-width: 70px;
-            border-radius: var(--border-radius-pill); /* Cohesive radius */
+            border-radius: var(--border-radius-pill);
         }
         
         /* Hide Leaflet popups on mobile */
@@ -1033,59 +962,51 @@
         }
 
         .species-filter {
-            top: calc(var(--header-height) + 10px);
+            top: 20px; /* Filter starts from top of screen now */
             bottom: calc(10px + var(--controls-height-mobile));
-            max-height: calc(100vh - var(--header-height) - var(--controls-height-mobile) - 20px);
+            max-height: calc(100vh - 20px - var(--controls-height-mobile) - 20px); /* Adjusted filter max-height */
             padding: 1.5rem;
             left: 10px;
             right: 10px;
-            border-radius: var(--border-radius-base); /* Cohesive radius */
+            border-radius: var(--border-radius-base);
         }
 
         .species-tag {
             padding: 1rem;
             font-size: 0.9rem;
-            border-radius: 16px; /* Keeping this one slightly smaller for visual variety */
+            border-radius: 16px;
         }
     }
 
     /* Very small mobile adjustments (up to 420px) */
     @media (max-width: 420px) {
         :root {
-            --header-height: 85px; /* Slightly adjusted for very small screens */
-            --controls-height-mobile: 110px;
-        }
-
-        .header {
-            padding: 0.5rem 0.5rem;
-            height: var(--header-height);
-        }
-        
-        .giant-whale {
-            font-size: 2.2rem;
-        }
-
-        .header h1 {
-            font-size: 1.1rem;
-        }
-
-        .header-subtitle {
-            font-size: 0.7rem; /* Smaller subtitle for very small screens */
-        }
-
-        .map-container {
-            margin-top: var(--header-height);
-        }
-
-        #map {
-            height: calc(100vh - var(--header-height) - var(--controls-height-mobile) - 5px);
+            --controls-height-mobile: 110px; /* Slightly smaller controls */
         }
 
         .controls {
             padding: 0.4rem;
             gap: 0.5rem;
             bottom: 5px;
-            border-radius: var(--border-radius-base); /* Cohesive radius */
+            border-radius: var(--border-radius-base);
+            width: 95%; /* Take even more width on very small screens */
+        }
+
+        .control-app-info {
+            padding-bottom: 0.4rem;
+            gap: 0.4rem;
+        }
+        
+        .giant-whale-small {
+            font-size: 1.8rem; /* Even smaller whale icon */
+        }
+
+        .control-app-title {
+            font-size: 1.1rem;
+        }
+
+        .control-app-subtitle {
+            font-size: 0.65rem;
         }
 
         .control-buttons {
@@ -1097,7 +1018,7 @@
             font-size: 0.75rem;
             gap: 4px;
             min-width: unset;
-            border-radius: var(--border-radius-pill); /* Cohesive radius */
+            border-radius: var(--border-radius-pill);
         }
 
         .control-btn .btn-icon {
@@ -1113,7 +1034,7 @@
             padding: 0.25rem 0.6rem;
             font-size: 0.65rem;
             gap: 3px;
-            border-radius: var(--border-radius-sm-pill); /* Cohesive radius */
+            border-radius: var(--border-radius-sm-pill);
         }
         .stat-pill .stat-icon {
             font-size: 0.75rem;
@@ -1123,9 +1044,9 @@
         }
 
         .species-filter {
-            top: calc(var(--header-height) + 10px);
+            top: 10px; /* Adjust filter top again for very small screens */
             bottom: calc(5px + var(--controls-height-mobile));
-            max-height: calc(100vh - var(--header-height) - var(--controls-height-mobile) - 15px);
+            max-height: calc(100vh - 15px - var(--controls-height-mobile) - 15px);
         }
     }
 </style>
@@ -1192,24 +1113,10 @@
                             <p class="whale-modal-fact-text" id="modalFacts">--</p>
                         </div>
                     </div>
-                    <! -- END NEW -->
-
                 </div>
             </div>
         </div>
     </div>
-
-    <header class="header">
-        <div class="header-content">
-            <div class="whale-header">
-                <div class="giant-whale">🐋</div>
-                <div class="header-text-group">
-                    <h1>Whale Tracker</h1>
-                    <p class="header-subtitle">Thanks for all the fish!</p>
-                </div>
-            </div>
-            </div>
-    </header>
 
     <div class="species-filter" id="speciesFilter">
         <h2 class="filter-header">Select Species to Track</h2>
@@ -1217,10 +1124,14 @@
     </div>
 
     <div class="map-container">
-        <div id="map"></div>
-    </div>
+        <div id="map"></div> </div>
 
     <div class="controls">
+        <div class="control-app-info"> <div class="giant-whale-small">🐋</div> <div class="control-text-group">
+                <h1 class="control-app-title">Whale Tracker</h1>
+                <p class="control-app-subtitle">Thanks for all the fish!</p>
+            </div>
+        </div>
         <div class="control-buttons">
             <button class="control-btn active" id="mapViewBtn">
                 <span class="btn-icon">🗺️</span>
@@ -1290,26 +1201,23 @@
                     position: 'topright'
                 }).addTo(this.map);
                 
-                // Custom popup positioning for mobile
+                // Custom popup positioning for mobile - adjusted to no header
                 this.map.on('popupopen', (e) => {
                     const popup = e.popup;
                     const popupHeight = popup._container.offsetHeight;
-                    const mapHeight = this.map.getSize().y;
-                    const headerHeight = window.innerWidth <= 768 ? 170 : 140;
+                    // No fixed header to consider, just map boundaries
+                    const mapTopBoundary = 20; // A small buffer from the top of the map if needed
                     
-                    // Check if popup would be cut off at the top
                     const popupTop = this.map.latLngToContainerPoint(popup._latlng).y - popupHeight;
                     
-                    if (popupTop < headerHeight) {
-                        // Calculate new position to ensure popup is fully visible
-                        const targetY = headerHeight + popupHeight / 2 + 20;
+                    if (popupTop < mapTopBoundary) {
+                        const targetY = mapTopBoundary + popupHeight / 2 + 20;
                         const targetPoint = L.point(
                             this.map.latLngToContainerPoint(popup._latlng).x,
                             targetY
                         );
                         const targetLatLng = this.map.containerPointToLatLng(targetPoint);
                         
-                        // Smoothly pan to show the popup
                         this.map.panTo(targetLatLng, {
                             animate: true,
                             duration: 0.5
@@ -1345,7 +1253,7 @@
                     }
                 });
                 
-                // Map view button
+                // Map view button (now also reset view)
                 document.getElementById('mapViewBtn').addEventListener('click', () => {
                     console.log('Map View Button Clicked!');
                     document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
@@ -1475,7 +1383,7 @@
                         maxWidth: 320,
                         className: 'whale-popup-wrapper',
                         autoPan: true,
-                        autoPanPaddingTopLeft: [20, 180],
+                        autoPanPaddingTopLeft: [20, 20], // Adjusted padding for no header
                         autoPanPaddingBottomRight: [20, 100],
                         keepInView: true
                     });
@@ -1494,7 +1402,7 @@
                 const modalCoords = document.getElementById('modalCoords');
                 const modalRecorder = document.getElementById('modalRecorder');
                 const modalRecorderSection = document.getElementById('modalRecorderSection');
-                const modalFacts = document.getElementById('modalFacts'); // New element
+                const modalFacts = document.getElementById('modalFacts');
 
                 // Get whale data
                 const commonName = this.getCommonName(whale.scientificName);
@@ -1502,14 +1410,14 @@
                 const emoji = this.getWhaleEmoji(whale.scientificName);
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-                const whaleInfo = this.getWhaleInfo(whale.scientificName); // Get new info
+                const whaleInfo = this.getWhaleInfo(whale.scientificName);
 
                 // Set modal content
                 modalTitle.textContent = commonName;
                 modalLocation.textContent = location;
                 modalDate.textContent = date;
                 modalCoords.textContent = `${whale.decimalLatitude.toFixed(4)}, ${whale.decimalLongitude.toFixed(4)}`;
-                modalFacts.textContent = whaleInfo.facts; // Set new info
+                modalFacts.textContent = whaleInfo.facts;
 
                 // Handle image/emoji
                 if (imageUrl) {
@@ -1544,7 +1452,6 @@
                     'Delphinus delphis': '🐬'
                 };
                 
-                // Extract just the genus and species (first two words)
                 const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
                 return emojiMap[binomialName] || '🐋';
             }
@@ -1562,7 +1469,6 @@
                     'Delphinus delphis': 'images/common_dolphin.jpg'
                 };
                 
-                // Extract just the genus and species (first two words)
                 const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
                 return imageMap[binomialName] || null;
             }
@@ -1630,7 +1536,7 @@
                 const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
                 const imageUrl = this.getWhaleImageUrl(whale.scientificName);
                 const emoji = this.getWhaleEmoji(whale.scientificName);
-                const whaleInfo = this.getWhaleInfo(whale.scientificName); // Get new info
+                const whaleInfo = this.getWhaleInfo(whale.scientificName);
                 
                 const humanReadableLocation = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
 
