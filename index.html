@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🐋 Whale Tracker - Discover Ocean Giants</title>
+<meta name="theme-color" content="#0A1628">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
     <title>🐋 Whale Tracker - Discover Ocean Giants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,25 +152,27 @@
 
         /* --- Controls (Bottom Navigation & Stats) --- */
         .controls {
-            position: fixed;
-            bottom: calc(20px + env(safe-area-inset-bottom, 0px)); /* Adjust for safe area at bottom */
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 22, 40, 0.7); /* Consistent transparent background */
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(100, 181, 246, 0.2);
-            padding: 0.8rem 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem; /* Increased gap for better separation */
-            z-index: 1000;
-            border-radius: var(--border-radius-base); /* Cohesive radius */
-            box-shadow: var(--shadow-xl);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 90%; /* Let it take more width */
-            max-width: 550px; /* Set a max-width for larger screens */
-            align-items: center;
-        }
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 22, 40, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(100, 181, 246, 0.2);
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    z-index: 1000;
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-xl);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 90%;
+    max-width: 550px;
+    align-items: center;
+    pointer-events: auto; /* NEW - Ensure controls receive touch events */
+    touch-action: manipulation; /* NEW - Prevent map panning when touching controls */
+}
 
         .control-app-info { /* Styling for the moved app title and subtitle */
             display: flex;
@@ -895,13 +901,15 @@
             }
 
             .controls {
-                bottom: calc(10px + env(safe-area-inset-bottom, 0px)); /* Adjust controls bottom for safe area */
-                padding: 0.5rem;
-                border-radius: var(--border-radius-base);
-                gap: 0.6rem;
-                width: 90%;
-                max-width: 400px;
-            }
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 0.5rem;
+    border-radius: var(--border-radius-base);
+    gap: 0.6rem;
+    width: 90%;
+    max-width: 400px;
+    pointer-events: auto; /* NEW - Ensure controls receive touch events */
+    touch-action: manipulation; /* NEW - Prevent map panning when touching controls */
+}
 
             .control-app-info {
                 padding-bottom: 0.5rem;
@@ -927,12 +935,14 @@
             }
             
             .control-btn {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.85rem;
-                flex: 1;
-                min-width: 70px;
-                border-radius: var(--border-radius-pill);
-            }
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 70px;
+    border-radius: var(--border-radius-pill);
+    pointer-events: auto; /* NEW - Ensure buttons receive touch events */
+    touch-action: manipulation; /* NEW - Prevent map panning when touching buttons */
+}
             
             /* Hide Leaflet popups on mobile */
             .leaflet-popup {
@@ -1025,12 +1035,14 @@
             }
 
             .controls {
-                padding: 0.4rem;
-                gap: 0.5rem;
-                bottom: calc(5px + env(safe-area-inset-bottom, 0px)); /* Adjust for safe area */
-                border-radius: var(--border-radius-base);
-                width: 95%; /* Take even more width on very small screens */
-            }
+    padding: 0.4rem;
+    gap: 0.5rem;
+    bottom: calc(5px + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--border-radius-base);
+    width: 95%;
+    pointer-events: auto; /* NEW - Ensure controls receive touch events */
+    touch-action: manipulation; /* NEW - Prevent map panning when touching controls */
+}
 
             .control-app-info {
                 padding-bottom: 0.4rem;
@@ -1054,12 +1066,14 @@
             }
 
             .control-btn {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.75rem;
-                gap: 4px;
-                min-width: unset;
-                border-radius: var(--border-radius-pill);
-            }
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    gap: 4px;
+    min-width: unset;
+    border-radius: var(--border-radius-pill);
+    pointer-events: auto; /* NEW - Ensure buttons receive touch events */
+    touch-action: manipulation; /* NEW - Prevent map panning when touching buttons */
+}
 
             .control-btn .btn-icon {
                 display: none;
