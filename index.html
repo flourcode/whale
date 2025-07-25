@@ -95,16 +95,6 @@
             overflow: hidden;
         }
 
-        .wave {
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 200%;
-            height: 100px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%234A90E2' fill-opacity='0.1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") repeat-x;
-            animation: wave-animation 20s linear infinite;
-        }
-
         .wave:nth-child(2) {
             bottom: 10px;
             opacity: 0.5;
@@ -654,13 +644,6 @@
             line-height: 1.4;
         }
 
-        /* Style for the audio player within the modal */
-        #whaleAudioPlayer {
-            width: 100%; /* Make the audio player fill its container */
-            margin-top: 5px; /* Small space below label */
-            height: 30px; /* Make the audio player more compact */
-        }
-
         /* Whale Popups (Desktop Only) */
         .whale-popup {
             color: var(--ocean-dark);
@@ -1170,16 +1153,7 @@
                             <p class="whale-modal-fact-text" id="modalFacts">--</p>
                         </div>
                     </div>
-                    <div class="whale-modal-detail" id="modalAudioSection">
-                        <div class="whale-modal-detail-icon">🔊</div>
-                        <div class="whale-modal-detail-content">
-                            <div class="whale-modal-detail-label">Listen to the Whale</div>
-                            <audio controls preload="none" id="whaleAudioPlayer">
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1240,8 +1214,8 @@
                 this.markers = [];
                 this.activeSpecies = new Set();
                 
-                this.initialMapCenter = [20, -140]; 
-                this.initialMapZoom = 3;             
+                this.initialMapCenter = [20, -140]; // Store initial center
+                this.initialMapZoom = 3;             // Store initial zoom
                 
                 this.init();
             }
@@ -1249,7 +1223,7 @@
             async init() { // Corrected: Added 'async'
                 this.initMap();
                 this.setupEventListeners();
-                await this.loadWhaleData(); 
+                await this.loadWhaleData(); // This 'await' is now valid
                 this.hideLoading();
                 this.updateStats(); 
             }
@@ -1353,61 +1327,13 @@
                 });
             }
 
-            showWhaleModal(whale) {
-                const modal = document.getElementById('whaleModal');
-                const modalImage = document.getElementById('modalImage');
-                const modalEmoji = document.getElementById('modalEmoji');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalLocation = document.getElementById('modalLocation');
-                const modalDate = document.getElementById('modalDate');
-                const modalFacts = document.getElementById('modalFacts');
-                const modalAudioPlayer = document.getElementById('whaleAudioPlayer'); 
-                const modalAudioSection = document.getElementById('modalAudioSection'); 
-
-                const commonName = this.getCommonName(whale.scientificName);
-                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
-                const emoji = this.getWhaleEmoji(whale.scientificName);
-                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
-                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-                const whaleInfo = this.getWhaleInfo(whale.scientificName);
-
-                modalTitle.textContent = commonName;
-                modalLocation.textContent = location;
-                modalDate.textContent = date;
-                modalFacts.textContent = whaleInfo.facts;
-
-                // Handle audio
-                if (whaleInfo.audio) {
-                    modalAudioPlayer.src = whaleInfo.audio;
-                    modalAudioSection.style.display = 'flex'; // Show audio section
-                    modalAudioPlayer.load(); // Load the audio (but not play automatically)
-                } else {
-                    modalAudioPlayer.src = ''; // Clear source
-                    modalAudioSection.style.display = 'none'; // Hide audio section if no clip
-                }
-                
-                // Handle image/emoji
-                if (imageUrl) {
-                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
-                } else {
-                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
-                }
-                
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Disable body scroll when modal is open
-            }
-
             closeWhaleModal() {
-                const modalAudioPlayer = document.getElementById('whaleAudioPlayer');
-                if (modalAudioPlayer) {
-                    modalAudioPlayer.pause();
-                    modalAudioPlayer.currentTime = 0; // Reset to start
-                }
+                // Removed audio stopping logic here
                 document.getElementById('whaleModal').classList.remove('active');
-                document.body.style.overflow = 'auto'; // Re-enable body scroll when modal is closed
+                document.body.style.overflow = 'auto'; // Re-enable scrolling
             }
 
-            async loadWhaleData() { /* */
+            async loadWhaleData() { 
                 try {
                     const whaleSpecies = [
                         'Balaenoptera musculus',
@@ -1457,7 +1383,7 @@
                 }
             }
 
-            displayWhales() { /* */
+            displayWhales() { 
                 this.markers.forEach(marker => this.map.removeLayer(marker));
                 this.markers = [];
 
@@ -1470,7 +1396,7 @@
                 });
             }
 
-            createWhaleMarker(whale) { /* */
+            createWhaleMarker(whale) { 
                 const icon = L.divIcon({
                     html: `<div class="whale-marker">${this.getWhaleEmoji(whale.scientificName)}</div>`,
                     className: 'whale-marker-container',
@@ -1497,7 +1423,39 @@
                 return marker;
             }
 
-            // Note: showWhaleModal and closeWhaleModal were already updated in previous steps and are correct.
+            showWhaleModal(whale) {
+                const modal = document.getElementById('whaleModal');
+                const modalImage = document.getElementById('modalImage');
+                const modalEmoji = document.getElementById('modalEmoji');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalLocation = document.getElementById('modalLocation');
+                const modalDate = document.getElementById('modalDate');
+                const modalFacts = document.getElementById('modalFacts');
+                // REMOVED audio player related variables
+
+                const commonName = this.getCommonName(whale.scientificName);
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
+                const emoji = this.getWhaleEmoji(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
+                const whaleInfo = this.getWhaleInfo(whale.scientificName); // Still call getWhaleInfo for facts
+
+                modalTitle.textContent = commonName;
+                modalLocation.textContent = location;
+                modalDate.textContent = date;
+                modalFacts.textContent = whaleInfo.facts;
+
+                // REMOVED audio handling logic
+                
+                if (imageUrl) {
+                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
+                } else {
+                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; 
+            }
 
             getWhaleEmoji(scientificName) {
                 const emojiMap = {
@@ -1556,7 +1514,7 @@
                 }
             }
 
-            getWhaleInfo(scientificName) { /* */
+            getWhaleInfo(scientificName) { 
                 const infoMap = {
                     'Balaenoptera musculus': {
                         facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles."
