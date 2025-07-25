@@ -52,9 +52,10 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden; /* Prevent horizontal overflow */
-            overflow-y: hidden; /* Prevent body scrolling by default unless modal is open or explicitly allowed */
-            overscroll-behavior-y: contain; /* Prevents rubber-banding/pull-to-refresh on most browsers */
-            /* Add safe area insets to HTML/body to push content, letting background fill */
+            /* Default to hidden for body to prevent scrolling issues with fixed elements */
+            overflow-y: hidden; 
+            overscroll-behavior-y: contain; /* Prevents rubber-banding/pull-to-refresh */
+            /* Apply safe area insets to HTML/body to push content, letting background fill */
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
@@ -130,8 +131,8 @@
         /* Map Container */
         .map-container {
             position: relative;
-            /* Height is dynamic based on controls, and now safe-areas */
-            height: calc(100vh - var(--controls-height-desktop) - 20px); /* Adjust for controls bottom + its height */
+            /* Map height considers the entire viewport minus bottom controls. */
+            height: calc(100vh - var(--controls-height-desktop) - 20px); 
             width: 100%;
             margin-top: 0; /* Map goes to the very top */
             z-index: 10;
@@ -482,6 +483,8 @@
         .whale-modal.active {
             display: flex;
             flex-direction: column;
+            /* Allow modal content to scroll. Body is hidden, so this handles scroll. */
+            overflow-y: auto; 
         }
 
         .modal-close {
@@ -1167,7 +1170,6 @@
                             <p class="whale-modal-fact-text" id="modalFacts">--</p>
                         </div>
                     </div>
-
                     <div class="whale-modal-detail" id="modalAudioSection">
                         <div class="whale-modal-detail-icon">🔊</div>
                         <div class="whale-modal-detail-content">
@@ -1177,7 +1179,6 @@
                             </audio>
                         </div>
                     </div>
-                    <! -- END NEW -->
                 </div>
             </div>
         </div>
@@ -1239,8 +1240,8 @@
                 this.markers = [];
                 this.activeSpecies = new Set();
                 
-                this.initialMapCenter = [20, -140]; // Store initial center
-                this.initialMapZoom = 3;             // Store initial zoom
+                this.initialMapCenter = [20, -140]; 
+                this.initialMapZoom = 3;             
                 
                 this.init();
             }
@@ -1248,7 +1249,7 @@
             async init() { // Corrected: Added 'async'
                 this.initMap();
                 this.setupEventListeners();
-                await this.loadWhaleData(); // This 'await' is now valid
+                await this.loadWhaleData(); 
                 this.hideLoading();
                 this.updateStats(); 
             }
@@ -1352,17 +1353,61 @@
                 });
             }
 
+            showWhaleModal(whale) {
+                const modal = document.getElementById('whaleModal');
+                const modalImage = document.getElementById('modalImage');
+                const modalEmoji = document.getElementById('modalEmoji');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalLocation = document.getElementById('modalLocation');
+                const modalDate = document.getElementById('modalDate');
+                const modalFacts = document.getElementById('modalFacts');
+                const modalAudioPlayer = document.getElementById('whaleAudioPlayer'); 
+                const modalAudioSection = document.getElementById('modalAudioSection'); 
+
+                const commonName = this.getCommonName(whale.scientificName);
+                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
+                const emoji = this.getWhaleEmoji(whale.scientificName);
+                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
+                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
+                const whaleInfo = this.getWhaleInfo(whale.scientificName);
+
+                modalTitle.textContent = commonName;
+                modalLocation.textContent = location;
+                modalDate.textContent = date;
+                modalFacts.textContent = whaleInfo.facts;
+
+                // Handle audio
+                if (whaleInfo.audio) {
+                    modalAudioPlayer.src = whaleInfo.audio;
+                    modalAudioSection.style.display = 'flex'; // Show audio section
+                    modalAudioPlayer.load(); // Load the audio (but not play automatically)
+                } else {
+                    modalAudioPlayer.src = ''; // Clear source
+                    modalAudioSection.style.display = 'none'; // Hide audio section if no clip
+                }
+                
+                // Handle image/emoji
+                if (imageUrl) {
+                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
+                } else {
+                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Disable body scroll when modal is open
+            }
+
             closeWhaleModal() {
                 const modalAudioPlayer = document.getElementById('whaleAudioPlayer');
                 if (modalAudioPlayer) {
                     modalAudioPlayer.pause();
-                    modalAudioPlayer.currentTime = 0;
+                    modalAudioPlayer.currentTime = 0; // Reset to start
                 }
                 document.getElementById('whaleModal').classList.remove('active');
-                document.body.style.overflow = 'auto'; // Re-enable scrolling
+                document.body.style.overflow = 'auto'; // Re-enable body scroll when modal is closed
             }
 
-            async loadWhaleData() { // Corrected: This method was missing from previous output
+            async loadWhaleData() { /* */
                 try {
                     const whaleSpecies = [
                         'Balaenoptera musculus',
@@ -1412,7 +1457,7 @@
                 }
             }
 
-            displayWhales() { // Corrected: This method was missing from previous output
+            displayWhales() { /* */
                 this.markers.forEach(marker => this.map.removeLayer(marker));
                 this.markers = [];
 
@@ -1425,7 +1470,7 @@
                 });
             }
 
-            createWhaleMarker(whale) { // Corrected: This method was missing from previous output
+            createWhaleMarker(whale) { /* */
                 const icon = L.divIcon({
                     html: `<div class="whale-marker">${this.getWhaleEmoji(whale.scientificName)}</div>`,
                     className: 'whale-marker-container',
@@ -1452,47 +1497,7 @@
                 return marker;
             }
 
-            showWhaleModal(whale) {
-                const modal = document.getElementById('whaleModal');
-                const modalImage = document.getElementById('modalImage');
-                const modalEmoji = document.getElementById('modalEmoji');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalLocation = document.getElementById('modalLocation');
-                const modalDate = document.getElementById('modalDate');
-                const modalFacts = document.getElementById('modalFacts');
-                const modalAudioPlayer = document.getElementById('whaleAudioPlayer'); 
-                const modalAudioSection = document.getElementById('modalAudioSection'); 
-
-                const commonName = this.getCommonName(whale.scientificName);
-                const imageUrl = this.getWhaleImageUrl(whale.scientificName);
-                const emoji = this.getWhaleEmoji(whale.scientificName);
-                const date = whale.eventDate ? new Date(whale.eventDate).toLocaleDateString() : 'Unknown date';
-                const location = whale.locality || whale.stateProvince || whale.country || 'Open Ocean';
-                const whaleInfo = this.getWhaleInfo(whale.scientificName);
-
-                modalTitle.textContent = commonName;
-                modalLocation.textContent = location;
-                modalDate.textContent = date;
-                modalFacts.textContent = whaleInfo.facts;
-
-                if (whaleInfo.audio) {
-                    modalAudioPlayer.src = whaleInfo.audio;
-                    modalAudioSection.style.display = 'flex'; 
-                    modalAudioPlayer.load(); 
-                } else {
-                    modalAudioPlayer.src = ''; 
-                    modalAudioSection.style.display = 'none'; 
-                }
-                
-                if (imageUrl) {
-                    modalImage.innerHTML = `<img src="${imageUrl}" alt="${commonName}" onerror="this.parentElement.innerHTML='<div class=\\'whale-modal-emoji\\'>${emoji}</div>'">`;
-                } else {
-                    modalImage.innerHTML = `<div class="whale-modal-emoji">${emoji}</div>`;
-                }
-                
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; 
-            }
+            // Note: showWhaleModal and closeWhaleModal were already updated in previous steps and are correct.
 
             getWhaleEmoji(scientificName) {
                 const emojiMap = {
@@ -1551,47 +1556,38 @@
                 }
             }
 
-            getWhaleInfo(scientificName) { // Corrected: This method was missing from previous output
+            getWhaleInfo(scientificName) { /* */
                 const infoMap = {
                     'Balaenoptera musculus': {
-                        facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles.",
-                        audio: 'audio/blue_whale_sound.ogg' 
+                        facts: "Blue whales are found in all oceans, migrating between feeding grounds in polar waters and breeding grounds in warmer, tropical areas. Their vocalizations are among the loudest sounds made by any animal and can travel for hundreds of miles."
                     },
                     'Megaptera novaeangliae': {
-                        facts: "Known for their acrobatic breaches and complex songs, humpbacks are found in oceans worldwide and undertake one of the longest migrations of any mammal. They use a unique 'bubble-net feeding' technique to trap fish.",
-                        audio: 'audio/humpback_whale_sound.ogg' 
+                        facts: "Known for their acrobatic breaches and complex songs, humpbacks are found in oceans worldwide and undertake one of the longest migrations of any mammal. They use a unique 'bubble-net feeding' technique to trap fish."
                     },
                     'Balaenoptera physalus': {
-                        facts: "The second-largest whale species, fin whales are fast swimmers found in all major oceans, preferring temperate and polar waters. They are often called 'greyhounds of the sea' due to their speed.",
-                        audio: 'audio/fin_whale_sound.ogg' 
+                        facts: "The second-largest whale species, fin whales are fast swimmers found in all major oceans, preferring temperate and polar waters. They are often called 'greyhounds of the sea' due to their speed."
                     },
                     'Balaenoptera acutorostrata': {
-                        facts: "These smaller baleen whales are widespread in polar, temperate, and tropical waters. They are known for their inquisitive nature and sometimes approach boats.",
-                        audio: 'audio/minke_whale_sound.ogg' 
+                        facts: "These smaller baleen whales are widespread in polar, temperate, and tropical waters. They are known for their inquisitive nature and sometimes approach boats."
                     },
                     'Eubalaena glacialis': {
-                        facts: "Critically endangered, North Atlantic Right Whales inhabit temperate and subpolar waters of the North Atlantic, typically staying close to the coast. They were named 'right whales' because they were the 'right' ones to hunt.",
-                        audio: 'audio/right_whale_sound.ogg' 
+                        facts: "Critically endangered, North Atlantic Right Whales inhabit temperate and subpolar waters of the North Atlantic, typically staying close to the coast. They were named 'right whales' because they were the 'right' ones to hunt."
                     },
                     'Physeter macrocephalus': {
-                        facts: "Found in all deep oceans, sperm whales are the largest toothed predators and can dive to extreme depths in search of giant squid. Their enormous, square-shaped heads contain a spermaceti organ.",
-                        audio: 'audio/sperm_whale_sound.ogg' 
+                        facts: "Found in all deep oceans, sperm whales are the largest toothed predators and can dive to extreme depths in search of giant squid. Their enormous, square-shaped heads contain a spermaceti organ."
                     },
                     'Orcinus orca': {
-                        facts: "The largest dolphin species, killer whales are highly intelligent and social, found in all oceans from polar to tropical regions. They are apex predators with diverse diets and complex hunting strategies.",
-                        audio: 'audio/orca_sound.ogg' 
+                        facts: "The largest dolphin species, killer whales are highly intelligent and social, found in all oceans from polar to tropical regions. They are apex predators with diverse diets and complex hunting strategies."
                     },
                     'Globicephala melas': {
-                        facts: "These highly social dolphins prefer deep, cool temperate waters and are often seen in large, tightly knit pods. They are known for their strong family bonds and can mass strand.",
-                        audio: 'audio/pilot_whale_sound.ogg' 
+                        facts: "These highly social dolphins prefer deep, cool temperate waters and are often seen in large, tightly knit pods. They are known for their strong family bonds and can mass strand."
                     },
                     'Delphinus delphis': {
-                        facts: "Agile and fast-swimming, common dolphins are found in temperate and tropical oceans worldwide, usually in large groups. They are easily recognizable by their hourglass pattern on their sides.",
-                        audio: 'audio/common_dolphin_sound.ogg' 
+                        facts: "Agile and fast-swimming, common dolphins are found in temperate and tropical oceans worldwide, usually in large groups. They are easily recognizable by their hourglass pattern on their sides."
                     }
                 };
                 const binomialName = scientificName.split(' ').slice(0, 2).join(' ');
-                return infoMap[binomialName] || { facts: "No specific habitat or facts available for this species yet.", audio: null };
+                return infoMap[binomialName] || { facts: "No specific habitat or facts available for this species yet." };
             }
 
 
@@ -1635,14 +1631,6 @@
                                     <span class="meta-icon">🌍</span>
                                     <span class="popup-fact-text">${whaleInfo.facts}</span>
                                 </div>
-                                ${whaleInfo.audio ? 
-                                    `<div class="whale-popup-meta-item">
-                                        <span class="meta-icon">🔊</span>
-                                        <audio controls preload="none" src="${whaleInfo.audio}">
-                                            Your browser does not support the audio element.
-                                        </audio>
-                                    </div>` : ''
-                                }
                             </div>
                         </div>
                     </div>
